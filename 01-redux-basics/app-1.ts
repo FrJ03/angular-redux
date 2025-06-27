@@ -19,32 +19,40 @@ const decrementadorAction: Action = {
 }
 
 const multiplicarAction: Action = {
-    type: ActionType.DECREMENTAR,
+    type: ActionType.MULTIPLICAR,
     payload: 2
 }
 
 const dividirAction: Action = {
-    type: ActionType.DECREMENTAR,
+    type: ActionType.DIVIDIR,
     payload: 2
 }
 
 const reducer = (state = 10, action: Action) => {
     switch (action.type) {
         case ActionType.INCREMENTAR: 
-            return state++
+            return state += 1
 
         case ActionType.DECREMENTAR: 
-            return state--
+            return state -= 1
 
         case ActionType.MULTIPLICAR:
-            return state * action.payload
+            return state = state * action.payload
 
         case ActionType.DIVIDIR:
             return (action.payload === 0) 
                 ? state 
-                : state / action.payload
+                : state = state /action.payload
 
         default:
             return state
     }
 }
+
+console.log(reducer(10, incrementadorAction))
+
+console.log(reducer(10, decrementadorAction))
+
+console.log(reducer(10, multiplicarAction))
+
+console.log(reducer(10, dividirAction))

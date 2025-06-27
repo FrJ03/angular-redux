@@ -5,6 +5,7 @@
   "type": "commonjs",
   "scripts": {
     "start:1": "ts-node app-1.ts",
+    "start:2": "ts-node app-2.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",

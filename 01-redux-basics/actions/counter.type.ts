@@ -1,0 +1,9 @@
+const ActionType = {
+    INCREMENTAR: 'INCREMENTAR',
+    DECREMENTAR: 'DECREMENTAR',
+    MULTIPLICAR: 'MULTIPLICAR',
+    DIVIDIR: 'DIVIDIR',
+    RESET: 'RESET'
+}
+
+export { ActionType }
