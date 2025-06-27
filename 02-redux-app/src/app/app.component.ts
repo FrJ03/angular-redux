@@ -1,4 +1,10 @@
 import { Component } from '@angular/core';
+import { Store } from '@ngrx/store';
+import { decrement, increment } from './actions/contador.actions';
+
+interface AppState {
+  count: number
+}
 
 @Component({
   selector: 'app-root',
@@ -7,17 +13,17 @@ import { Component } from '@angular/core';
   styleUrl: './app.component.css'
 })
 export class AppComponent {
-  contador: number
+  contador: number = 0
 
-  constructor () {
-    this.contador = 10
+  constructor (private store: Store<AppState>) {
+    this.store.subscribe(state => this.contador = state.count)
   }
 
   incrementar(){
-    this.contador += 1
+    this.store.dispatch(increment())
   }
 
   decrementar(){
-    this.contador -= 1
+    this.store.dispatch(decrement())
   }
 }
