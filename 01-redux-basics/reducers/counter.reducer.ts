@@ -1,6 +1,6 @@
 import { ActionType } from "../actions/counter.type"
 
-const reducer = (state = 10, action: Action) => {
+const counterReducer = (state = 10, action: Action) => {
     switch (action.type) {
         case ActionType.INCREMENTAR: 
             return state++
@@ -24,4 +24,4 @@ const reducer = (state = 10, action: Action) => {
     }
 }
 
-export { reducer }
+export { counterReducer }
