@@ -1,0 +1,19 @@
+<div class="flex flex-row justify-center w-full">
+  <div class="flex flex-col items-center">
+    <h1 class="font-semibold text-2xl">Contador</h1>
+    <h2 class="text-xl">{{contador}}</h2>
+  </div>
+</div>
+
+<div class="flex flex-row gap-2 w-full justify-center">
+    <button (click)="incrementar()" class="bg-blue-700 text-white p-2 rounded-md">Incrementar</button>
+    <button (click)="decrementar()" class="bg-gray-300 text-black p-2 rounded-md">Decrementar</button>
+</div>
+
+<hr>
+
+<div class="flex flex-row w-full justify-center">
+  <div class="flex flex-col w-full text-center content-center">
+    <app-hijo [contador]="contador" (cambioContador)="contador = $event"></app-hijo>
+  </div>
+</div>
