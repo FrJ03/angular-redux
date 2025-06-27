@@ -24,8 +24,4 @@ export class HijoComponent implements OnInit {
   dividir(){
     this.store.dispatch(divide({numero: 2}))
   }
-  
-  updateContador(newContador: number ){
-    this.contador = newContador
-  }
 }

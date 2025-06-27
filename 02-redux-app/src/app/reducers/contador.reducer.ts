@@ -1,5 +1,5 @@
 import { createReducer, on } from "@ngrx/store";
-import { decrement, divide, increment, product } from "../actions/contador.actions";
+import { decrement, divide, increment, product, reset } from "../actions/contador.actions";
 
 const initialState = 0
 
@@ -11,7 +11,8 @@ const _contadorReducer = createReducer(
     on(divide, (state, {numero}) => (numero === 0)
         ? state
         : state / numero
-    )
+    ),
+    on(reset, state => initialState)
 )
 
 export const contadorReducer = (state: any, action: any) => 
