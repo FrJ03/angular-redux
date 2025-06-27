@@ -7,6 +7,7 @@
     "start:1": "ts-node app-1.ts",
     "start:2": "ts-node app-2.ts",
     "start:3": "ts-node app-3.ts",
+    "start:4": "ts-node app-4.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
@@ -17,5 +18,8 @@
     "ts-node": "^10.9.2",
     "tslib": "^2.8.1",
     "typescript": "^5.8.3"
+  },
+  "dependencies": {
+    "redux": "^5.0.1"
   }
 }
