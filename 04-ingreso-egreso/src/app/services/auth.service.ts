@@ -31,4 +31,20 @@ export class AuthService {
       return false
     }
   }
+
+  loginUser(email: string, password: string): boolean{
+    const users = localStorage.getItem('users')
+
+    if(users === null) {return false}
+
+    const userList: User[] = JSON.parse(users)
+
+    const user = userList.filter(u => u.email === email && u.password === password)
+
+    if(user.length === 0) {return false}
+
+    localStorage.setItem('currentUser', JSON.stringify(user[0]))
+
+    return true
+  }
 }
