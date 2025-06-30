@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } 
 import { Router, RouterLink } from '@angular/router'
 import { AuthService } from '../../../services/auth.service';
 import { User } from '../../../models/user.model';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-register',
@@ -26,6 +27,13 @@ export class RegisterComponent{
   }
 
   registerUser(){
+    Swal.fire({
+      title: 'Waiting...',
+      didOpen: () => {
+        Swal.showLoading()
+      }
+    })
+
     if(this.registerForm.invalid){return}
 
     const newUser = new User(
@@ -35,7 +43,14 @@ export class RegisterComponent{
     )
 
     if(this.auth.createUser(newUser)){
+      Swal.close()
       this.router.navigateByUrl('/')
+    } else {
+      Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: 'User already exists',
+      })
     }
   }
 }
