@@ -7,7 +7,7 @@ import { AppComponent } from './app.component';
 import { TodoModule } from './todos/todo.module';
 import { FooterComponent } from './components/footer/footer.component';
 import { StoreModule } from '@ngrx/store';
-import { todoReducer } from './todos/reducers/todo.reducer';
+import { appReducer } from './app.reducer';
 
 @NgModule({
   declarations: [
@@ -18,7 +18,7 @@ import { todoReducer } from './todos/reducers/todo.reducer';
     BrowserModule,
     AppRoutingModule,
     TodoModule,
-    StoreModule.forRoot({todos: todoReducer}),
+    StoreModule.forRoot(appReducer),
     StoreDevtoolsModule.instrument({
       maxAge: 25
     }),
