@@ -15,12 +15,24 @@
               </thead>
 
               <tbody>
-                <tr>
-                  <td>Descripción</td>
-                  <td>Monto</td>
-                  <td>Tipo</td>
-                  <td>acciones</td>
-                </tr>
+                @for (item of ingresosEgresos; track $index) {
+                  <tr>
+                    <td>{{item.description}}</td>
+                    <td>{{item.quantity | currency}}</td>
+                    <td
+                      [class.text-success]="item.type === 'ingreso'"
+                      [class.text-danger]="item.type === 'egreso'"
+                    >
+                      {{item.type | titlecase}}
+                    </td>
+                    <td>
+                      <button type="button" class="btn btn-danger" (click)="deleteItem(item)">
+                        <i class="fa fa-trash"></i>
+                        Borrar
+                      </button>
+                    </td>
+                  </tr>
+                }
               </tbody>
 
             </table>

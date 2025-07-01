@@ -3,6 +3,7 @@ import { User } from '../models/user.model';
 import { BehaviorSubject, map } from 'rxjs';
 import { Store } from '@ngrx/store';
 import { setUser, unsetUser } from '../actions/auth.actions';
+import { unsetItems } from '../actions/ingreso-egreso.actions';
 
 @Injectable({
   providedIn: 'root'
@@ -27,6 +28,7 @@ export class AuthService {
         )}))
       } else {
         this.store.dispatch(unsetUser())
+        this.store.dispatch(unsetItems())
       }
     })
   }

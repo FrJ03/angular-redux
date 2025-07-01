@@ -27,6 +27,21 @@ export class IngresoEgresoService {
 
   }
 
+  deleteItem(uid: string){
+    const ingresosEgresos = localStorage.getItem(this.ingresoEgresoKey)
+    
+    if(ingresosEgresos === null) {return false}
+
+    const ieList: IngresoEgreso[] = JSON.parse(ingresosEgresos)
+
+    const newIeList = ieList.filter(ie => ie.uid !== uid)
+    
+    localStorage.setItem(this.ingresoEgresoKey, JSON.stringify(newIeList))
+    this.currentIngresosEgresos.next(newIeList)    
+    
+    return true
+  }
+
   private getIngresoEgreso(email: string): IngresoEgreso[]{
     const ingresosEgresos = localStorage.getItem(this.ingresoEgresoKey)
     

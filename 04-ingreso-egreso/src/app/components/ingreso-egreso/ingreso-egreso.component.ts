@@ -8,6 +8,7 @@ import { IngresoEgresoService } from '../../services/ingreso-egreso.service';
 import { User } from '../../models/user.model';
 import { Subscription } from 'rxjs';
 import { isLoading, stopLoading } from '../../actions/ui.actions';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-ingreso-egreso',
@@ -59,6 +60,7 @@ export class IngresoEgresoComponent implements OnDestroy {
 
     if(this.ingresoForm.invalid || this.currentEmail === '') {
       this.store.dispatch(stopLoading())
+      Swal.fire('Error', 'No se ha podido completar la operación', 'error')
       return
     }
 
@@ -72,5 +74,7 @@ export class IngresoEgresoComponent implements OnDestroy {
     this.ingresoEgresoService.crearIngresoEgreso(newIngresoEgreso)
 
     this.store.dispatch(stopLoading())
+
+    Swal.fire('Creado', 'Elemento creado', 'success')
   }
 }
