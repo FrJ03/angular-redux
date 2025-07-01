@@ -6,11 +6,10 @@ import { CommonModule } from '@angular/common';
 import { Subscription } from 'rxjs';
 import { IngresoEgresoService } from '../../../services/ingreso-egreso.service';
 import Swal from 'sweetalert2';
-import { OrdenIngresoPipe } from '../../../pipes/orden-ingreso.pipe';
 
 @Component({
   selector: 'app-detalle',
-  imports: [CommonModule, OrdenIngresoPipe],
+  imports: [CommonModule],
   templateUrl: './detalle.component.html'
 })
 export class DetalleComponent implements OnDestroy{

@@ -8,7 +8,7 @@ import { StoreModule } from '@ngrx/store';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { OrdenIngresoPipe } from './pipes/orden-ingreso.pipe';
+import {provideCharts, withDefaultRegisterables,} from 'ng2-charts'
 
 @NgModule({
   declarations: [
@@ -25,7 +25,7 @@ import { OrdenIngresoPipe } from './pipes/orden-ingreso.pipe';
       maxAge: 25
     })
   ],
-  providers: [],
+  providers: [provideCharts(withDefaultRegisterables())],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
