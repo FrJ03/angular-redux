@@ -1,10 +1,13 @@
 import { ActionReducerMap } from "@ngrx/store";
 import * as ui from './ui.reducer'
+import * as auth from './auth.reducer'
 
 export interface AppState {
-    ui: ui.State
+    ui: ui.State,
+    user: auth.State
 }
 
 export const appReducers: ActionReducerMap<AppState> = {
-    ui: ui.uiReducer
+    ui: ui.uiReducer,
+    user: auth.authReducer
 }

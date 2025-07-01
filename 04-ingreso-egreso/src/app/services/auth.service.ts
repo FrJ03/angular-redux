@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
 import { User } from '../models/user.model';
 import { BehaviorSubject, map } from 'rxjs';
+import { Store } from '@ngrx/store';
+import { setUser, unsetUser } from '../actions/auth.actions';
 
 @Injectable({
   providedIn: 'root'
@@ -8,11 +10,24 @@ import { BehaviorSubject, map } from 'rxjs';
 export class AuthService {
   private currentUserStorage = new BehaviorSubject<Record<string, any>>({})
 
-  constructor() { }
+  constructor(private store: Store) { }
 
   initAuthListener(){
     this.storageChanges$.subscribe(user => {
-      console.log(user)
+      if(
+        user
+        && Object.keys(user).includes('username')
+        && Object.keys(user).includes('email')
+        && Object.keys(user).includes('password')
+      ){
+        this.store.dispatch(setUser({user: new User(
+          user['username'],
+          user['email'],
+          user['password']
+        )}))
+      } else {
+        this.store.dispatch(unsetUser())
+      }
     })
   }
 

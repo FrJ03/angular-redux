@@ -1,4 +1,4 @@
-import {Action, createReducer, on} from '@ngrx/store'
+import {Action, ActionReducer, createReducer, on} from '@ngrx/store'
 import { isLoading, stopLoading } from '../actions/ui.actions'
 
 export interface State {
@@ -21,5 +21,5 @@ const _uiReducer = createReducer(
     }))
 )
 
-export const uiReducer = (state: State | undefined, action: Action<string>) => 
+export const uiReducer: ActionReducer<State, Action<string>> = (state, action) => 
     _uiReducer(state, action)
