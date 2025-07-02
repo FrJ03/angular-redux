@@ -12,12 +12,17 @@ import { loadUsers } from '../../../actions/users.actions';
 })
 export class UserListComponent {
   users: User[] = []
+  loading: boolean = false
+  error: any = null
+
   store$ = inject(Store<AppState>)
 
   constructor(){ 
-    this.store$.select(store => store.users.users).subscribe(users => 
-      this.users = users
-    )
+    this.store$.select(store => store.users).subscribe(store => {
+      this.users = store.users
+      this.loading = store.loading
+      this.error = store.error
+    })
 
     this.store$.dispatch(loadUsers())
   }
