@@ -1,15 +1,13 @@
 import { Component } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { ChartData } from 'chart.js';
-import { AppState } from '../../../reducers/app.reducer';
 import { IngresoEgreso } from '../../../models/ingreso-egreso.model';
-import { CommonModule } from '@angular/common';
-import { BaseChartDirective, provideCharts, withDefaultRegisterables } from 'ng2-charts';
+import { provideCharts, withDefaultRegisterables } from 'ng2-charts';
+import { AppStateWithIngreso } from '../../../reducers/ingreso-egreso.reducer';
 
 @Component({
   selector: 'app-estadistica',
-  imports: [CommonModule, BaseChartDirective],
-  standalone: true,
+  standalone: false,
   templateUrl: './estadistica.component.html',
   providers:[provideCharts(withDefaultRegisterables())],
 
@@ -32,7 +30,7 @@ export class EstadisticaComponent {
     ],
   };
 
-  constructor(private store: Store<AppState>){
+  constructor(private store: Store<AppStateWithIngreso>){
     this.store.select(store => store.ingresosEgresos.items)
       .subscribe(items => this.generateStats(items))
   }

@@ -1,9 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { LoginComponent } from './components/auth/login/login.component';
-import { RegisterComponent } from './components/auth/register/register.component';
-import { DashboardComponent } from './components/dashboard/dashboard.component';
-import { dashboardRoutes } from './components/dashboard/dashboard.routes';
+import { LoginComponent } from './auth/components/login/login.component';
+import { RegisterComponent } from './auth/components/register/register.component';
 import { AuthGuard } from './services/auth.guard';
 
 const routes: Routes = [
@@ -14,14 +12,13 @@ const routes: Routes = [
     path: 'register', component: RegisterComponent
   },
   {
-    path: '', component: DashboardComponent,
-    children: dashboardRoutes,
-    canActivate: [AuthGuard]
+    path: '',
+    canMatch: [AuthGuard],
+    loadChildren: () => import('./ingreso-egreso/ingreso-egreso.module')
+      .then(m => m.IngresoEgresoModule)
   },
   {
-    path: '**', component: DashboardComponent,
-    children: dashboardRoutes,
-    canActivate: [AuthGuard]
+    path: '**', redirectTo: ''
   }
 ];
 

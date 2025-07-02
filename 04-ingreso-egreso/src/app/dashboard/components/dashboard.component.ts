@@ -1,8 +1,4 @@
 import { Component, OnDestroy } from '@angular/core';
-import { NavbarComponent } from "../shared/navbar/navbar.component";
-import { SidebarComponent } from "../shared/sidebar/sidebar.component";
-import { FooterComponent } from "../shared/footer/footer.component";
-import { RouterOutlet } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { AppState } from '../../reducers/app.reducer';
 import { filter, Subscription } from 'rxjs';
@@ -11,7 +7,7 @@ import { setItems } from '../../actions/ingreso-egreso.actions';
 
 @Component({
   selector: 'app-dashboard',
-  imports: [NavbarComponent, SidebarComponent, FooterComponent, RouterOutlet],
+  standalone: false,
   templateUrl: './dashboard.component.html'
 })
 export class DashboardComponent implements OnDestroy{

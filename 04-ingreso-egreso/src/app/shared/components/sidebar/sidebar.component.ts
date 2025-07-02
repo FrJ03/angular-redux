@@ -3,11 +3,11 @@ import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../../services/auth.service';
 import { Store } from '@ngrx/store';
 import { AppState } from '../../../reducers/app.reducer';
-import { Subscription } from 'rxjs';
+import { filter, Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-sidebar',
-  imports: [RouterLink],
+  standalone: false,
   templateUrl: './sidebar.component.html'
 })
 export class SidebarComponent implements OnDestroy{
@@ -19,11 +19,14 @@ export class SidebarComponent implements OnDestroy{
     private router: Router,
     private store: Store<AppState>
   ){
-    this.storeSubscription = this.store.select(store => store.user.user).subscribe(user => {
-      if(user){
-        this.username = user.username
-      }
-    })
+    this.storeSubscription = this.store
+      .select(store => store.user.user)
+      .pipe(
+        filter(user => user !== null)
+      )
+      .subscribe(user => {
+          this.username = user.username
+      })
   }
 
   ngOnDestroy(): void {

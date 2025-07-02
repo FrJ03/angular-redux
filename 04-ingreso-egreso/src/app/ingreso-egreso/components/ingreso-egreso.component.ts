@@ -9,10 +9,11 @@ import { User } from '../../models/user.model';
 import { Subscription } from 'rxjs';
 import { isLoading, stopLoading } from '../../actions/ui.actions';
 import Swal from 'sweetalert2';
+import { AppStateWithIngreso } from '../../reducers/ingreso-egreso.reducer';
 
 @Component({
   selector: 'app-ingreso-egreso',
-  imports: [FormsModule, ReactiveFormsModule, CommonModule],
+  standalone: false,
   templateUrl: './ingreso-egreso.component.html'
 })
 export class IngresoEgresoComponent implements OnDestroy {
@@ -24,7 +25,7 @@ export class IngresoEgresoComponent implements OnDestroy {
 
   constructor(
     private fb: FormBuilder,
-    private store: Store<AppState>,
+    private store: Store<AppStateWithIngreso>,
     private ingresoEgresoService: IngresoEgresoService
   ){
     this.ingresoForm = fb.group({

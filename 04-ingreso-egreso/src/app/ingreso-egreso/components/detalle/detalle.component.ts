@@ -6,10 +6,11 @@ import { CommonModule } from '@angular/common';
 import { Subscription } from 'rxjs';
 import { IngresoEgresoService } from '../../../services/ingreso-egreso.service';
 import Swal from 'sweetalert2';
+import { AppStateWithIngreso } from '../../../reducers/ingreso-egreso.reducer';
 
 @Component({
   selector: 'app-detalle',
-  imports: [CommonModule],
+  standalone: false,
   templateUrl: './detalle.component.html'
 })
 export class DetalleComponent implements OnDestroy{
@@ -17,7 +18,7 @@ export class DetalleComponent implements OnDestroy{
   ingresosEgresosSubscription: Subscription
 
   constructor(
-    private store: Store<AppState>,
+    private store: Store<AppStateWithIngreso>,
     private ingresoEgresoService: IngresoEgresoService
   ){
     this.ingresosEgresosSubscription = this.store.select(store => store.ingresosEgresos.items)

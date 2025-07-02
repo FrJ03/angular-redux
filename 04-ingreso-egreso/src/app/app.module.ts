@@ -9,6 +9,9 @@ import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import {provideCharts, withDefaultRegisterables,} from 'ng2-charts'
+import { AuthModule } from './auth/auth.module';
+import { IngresoEgresoModule } from './ingreso-egreso/ingreso-egreso.module';
+import { SharedModule } from './shared/shared.module';
 
 @NgModule({
   declarations: [
@@ -18,7 +21,9 @@ import {provideCharts, withDefaultRegisterables,} from 'ng2-charts'
     BrowserModule,
     AppRoutingModule,
     ReactiveFormsModule,
+    AuthModule,
     CommonModule,
+    SharedModule,
     FormsModule,
     StoreModule.forRoot(appReducers),
     StoreDevtoolsModule.instrument({

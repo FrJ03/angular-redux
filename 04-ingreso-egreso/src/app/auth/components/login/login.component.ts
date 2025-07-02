@@ -1,48 +1,46 @@
 import { Component, OnDestroy } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router'
-import { AuthService } from '../../../services/auth.service';
-import { User } from '../../../models/user.model';
+import { Router, RouterLink } from '@angular/router';
 import Swal from 'sweetalert2';
 import { Store } from '@ngrx/store';
-import { AppState } from '../../../reducers/app.reducer';
 import { Subscription } from 'rxjs';
+import { AuthService } from '../../../services/auth.service';
+import { AppState } from '../../../reducers/app.reducer';
 import { isLoading, stopLoading } from '../../../actions/ui.actions';
 
 @Component({
-  selector: 'app-register',
-  standalone: true,
-  imports: [RouterLink, FormsModule, ReactiveFormsModule],
-  templateUrl: './register.component.html'
+  selector: 'app-login',
+  standalone: false,
+  templateUrl: './login.component.html'
 })
-export class RegisterComponent implements OnDestroy{
-  registerForm: FormGroup;
-  uiSubscription: Subscription
+export class LoginComponent implements OnDestroy{
+  loginForm: FormGroup
   loading: boolean = false
+  uiSubscription: Subscription
 
   constructor(
     private fb: FormBuilder,
     private auth: AuthService,
     private router: Router,
     private store: Store<AppState>
-  ) {
-    this.registerForm = this.fb.group({
-      nombre: ['', Validators.required],
+  ){
+    this.loginForm = fb.group({
       correo: ['', [Validators.email, Validators.required]],
       password: ['', Validators.required]
     })
 
-    this.uiSubscription = this.store.select(state => state.ui).subscribe(ui => 
+    this.uiSubscription = this.store.select(state => state.ui).subscribe(ui => {
       this.loading = ui.isLoading
-    )
+    })
   }
 
   ngOnDestroy(): void {
     this.uiSubscription.unsubscribe()
   }
 
-  registerUser(){
+  login(){
     this.store.dispatch(isLoading())
+    
     // Swal.fire({
     //   title: 'Waiting...',
     //   didOpen: () => {
@@ -50,15 +48,10 @@ export class RegisterComponent implements OnDestroy{
     //   }
     // })
 
-    if(this.registerForm.invalid){return}
-
-    const newUser = new User(
-      this.registerForm.value.nombre,
-      this.registerForm.value.correo,
-      this.registerForm.value.password
-    )
-
-    if(this.auth.createUser(newUser)){
+    if(this.loginForm.valid && this.auth.loginUser(
+      this.loginForm.value.correo,
+      this.loginForm.value.password
+    )){
       // Swal.close()
       this.store.dispatch(stopLoading())
       this.router.navigateByUrl('/')
@@ -67,7 +60,7 @@ export class RegisterComponent implements OnDestroy{
       Swal.fire({
         icon: 'error',
         title: 'Oops...',
-        text: 'User already exists',
+        text: 'Email or password is not correct',
       })
     }
   }
