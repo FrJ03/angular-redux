@@ -2,6 +2,8 @@ import { Injectable } from '@angular/core';
 import { User } from '../models/user.model';
 import { environment } from '../../environments/environment';
 import axios from 'axios'
+import { BehaviorSubject } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
 
 interface UserType { 
   id: number;
@@ -15,7 +17,7 @@ interface UserType {
   providedIn: 'root'
 })
 export class UserService {
-  private userMock: User[] = [
+  private userMock = new BehaviorSubject<User[]>([
     {
             "id": 1,
             "email": "george.bluth@reqres.in",
@@ -58,13 +60,13 @@ export class UserService {
             "last_name": "Ramos",
             "avatar": "https://reqres.in/img/faces/6-image.jpg"
         }
-  ]
+  ])
 
-  constructor() { }
+  constructor(private http: HttpClient) { }
 
-  async getUsers(): Promise<User[]>{
+  getUsers(){
     if(environment.PROD){
-      const response: any = await axios.get(
+      return this.http.get(
         `${environment.BASE_URL}users?per_page=6`,
         {
           headers: {
@@ -72,12 +74,7 @@ export class UserService {
           }
         }
       )
-
-      if(response.status !== 200){return []}
-
-      const userList: User[] = response.data
-
-      return userList
-    } else return this.userMock
+    } else 
+      return this.userMock.asObservable()
   }
 }
