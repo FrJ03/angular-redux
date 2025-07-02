@@ -1,1 +1,14 @@
-<p>user-list works!</p>
+<div class="row text-center row-cols-3">
+    @for (user of users; track $index) {
+        <div class="col">
+            <div class="card">
+                <img class="card-img-top" [src]="user.avatar">
+                <div class="card-body">
+                    <h5 class="card-title">{{user.first_name}} {{user.last_name}}</h5>
+                    <p class="card-text">{{user.email}}</p>
+                    <p class="card-text">{{user.id}}</p>
+                </div>
+            </div>
+        </div>
+    }
+</div>
