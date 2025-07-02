@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { User } from '../models/user.model';
 import { environment } from '../../environments/environment';
 import axios from 'axios'
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, map } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 
 interface UserType { 
@@ -17,7 +17,7 @@ interface UserType {
   providedIn: 'root'
 })
 export class UserService {
-  private userMock = new BehaviorSubject<User[]>([
+  private usersMock = new BehaviorSubject<User[]>([
     {
             "id": 1,
             "email": "george.bluth@reqres.in",
@@ -61,19 +61,40 @@ export class UserService {
             "avatar": "https://reqres.in/img/faces/6-image.jpg"
         }
   ])
+  private userMock = new BehaviorSubject<User>({
+            "id": 1,
+            "email": "george.bluth@reqres.in",
+            "first_name": "George",
+            "last_name": "Bluth",
+            "avatar": "https://reqres.in/img/faces/1-image.jpg"
+        })
 
   constructor(private http: HttpClient) { }
 
   getUsers(){
     if(environment.PROD){
-      return this.http.get(
+      return this.http.get<{data: any}>(
         `${environment.BASE_URL}users?per_page=6`,
         {
           headers: {
             "x-api-key": environment.API_KEY
           }
         }
-      )
+      ).pipe(map(resp => resp['data']))
+    } else 
+      return this.usersMock.asObservable()
+  }
+
+  getUser(id: string){
+    if(environment.PROD){
+      return this.http.get<{data: any}>(
+        `${environment.BASE_URL}users/${id}?per_page=6`,
+        {
+          headers: {
+            "x-api-key": environment.API_KEY
+          }
+        }
+      ).pipe(map(resp => resp['data']))
     } else 
       return this.userMock.asObservable()
   }
