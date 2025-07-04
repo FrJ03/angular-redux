@@ -7,6 +7,7 @@ import { appReducer } from './reducers/app.reducer';
 import { provideEffects } from '@ngrx/effects';
 import { UserEffect } from './effects/user.effect';
 import { MovementsEffect } from './effects/movements.effect';
+import { provideCharts, withDefaultRegisterables } from 'ng2-charts';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -20,5 +21,6 @@ export const appConfig: ApplicationConfig = {
     provideStoreDevtools({
       maxAge: 25
     }),
+    provideCharts(withDefaultRegisterables())
   ]
 };
