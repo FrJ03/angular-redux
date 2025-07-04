@@ -9,6 +9,7 @@ import { GetUserResponse } from '../models/dto/get-user.response';
 export class AuthService {
   public readonly registrationSignal = signal<Result | null>(null)
   public readonly getUserSignal = signal<Partial<GetUserResponse> | null>(null)
+  public readonly logoutSignal = signal<Result | null>(null)
 
   createUser(user: User){
     const users = localStorage.getItem('users')
@@ -82,6 +83,14 @@ export class AuthService {
         success: true,
         message: 'success'
       }
+    })
+  }
+
+  logout(){
+    localStorage.removeItem('currentUser')
+    this.logoutSignal.set({
+      success: true,
+      message: 'User logged out successfully'
     })
   }
 }

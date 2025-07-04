@@ -1,7 +1,7 @@
 import { inject, Injectable } from "@angular/core";
 import { Actions, createEffect, ofType } from '@ngrx/effects'
-import { logUser, logUserError, logUserSuccess, saveUser, saveUserError, saveUserSuccess } from "../actions/user.actions";
-import { catchError, map, mergeMap, of } from "rxjs";
+import { logoutUser, logoutUserError, logoutUserSuccess, logUser, logUserError, logUserSuccess, saveUser, saveUserError, saveUserSuccess } from "../actions/user.actions";
+import { catchError, map, merge, mergeMap, of } from "rxjs";
 import { AuthService } from "../services/auth.service";
 import { toObservable } from '@angular/core/rxjs-interop'
 
@@ -11,6 +11,7 @@ export class UserEffect {
     authService = inject(AuthService)
     registration$ = toObservable(this.authService.registrationSignal)
     login$ = toObservable(this.authService.getUserSignal)
+    logout$ = toObservable(this.authService.logoutSignal)
     
     saveUser$ = createEffect(
         () => this.actions.pipe(
@@ -45,6 +46,24 @@ export class UserEffect {
                             : logUserError({payload: response?.result?.message ?? 'Login Error'})
                         ),
                         catchError(err => of(logUserError({payload: err})))
+                    )
+                }
+            )
+        )
+    )
+
+    logoutUser$ = createEffect(
+        () => this.actions.pipe(
+            ofType(logoutUser),
+            mergeMap(
+                () => {
+                    this.authService.logout()
+                    return this.logout$.pipe(
+                        map(result => result?.success
+                            ? logoutUserSuccess()
+                            : logoutUserError({payload: result?.message ?? 'Unexpected error'})
+                        ),
+                        catchError(err => of(logoutUserError({payload: err})))
                     )
                 }
             )

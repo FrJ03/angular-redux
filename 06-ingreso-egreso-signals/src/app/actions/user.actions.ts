@@ -30,3 +30,16 @@ export const logUserError = createAction(
     '[User] Get User Error',
     props<{payload: any}>()
 )
+
+export const logoutUser = createAction(
+    '[User] Logout User'
+)
+
+export const logoutUserSuccess = createAction(
+    '[User] Logout User Success'
+)
+
+export const logoutUserError = createAction(
+    '[User] Logout User Error',
+    props<{payload: any}>()
+)
