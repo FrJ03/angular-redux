@@ -1,19 +1,25 @@
 import { inject, Injectable } from '@angular/core';
-import { CanActivate, CanMatch, Router } from '@angular/router';
+import { CanMatch, CanMatchFn, Route, Router } from '@angular/router';
 import { AuthService } from './auth.service';
-import { Observable, take, tap } from 'rxjs';
 
-@Injectable({
-  providedIn: 'root'
-})
-export class AuthGuard implements CanMatch {
-  auth = inject(AuthService)
-  router = inject(Router)
+export const authCanMatch: CanMatchFn = (route: Route) => {
+  const authService = inject(AuthService)
+  const router = inject(Router)
 
-  canMatch(): boolean {
-    if(!this.auth.isAuthSignal()){
-      this.router.navigateByUrl('/login')
+  const result = authService.checkLogged()
+
+  if(
+    route.path 
+    && ['login', 'register'].includes(route.path)
+  ){
+    if(result.logged){
+      router.navigateByUrl('')
     }
-    return this.auth.isAuthSignal()
+    return !result.logged
+  } else {
+    if(!result.logged){
+      router.navigateByUrl('login')
+    }
+    return result.logged
   }
 }

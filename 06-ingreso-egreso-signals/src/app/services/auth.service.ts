@@ -1,4 +1,4 @@
-import { Injectable, signal } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { User } from '../models/user.model';
 import { Result } from '../models/result.model';
 import { GetUserResponse } from '../models/dto/get-user.response';
@@ -8,24 +8,17 @@ import { CheckUserResponse } from '../models/dto/check-user.response';
   providedIn: 'root'
 })
 export class AuthService {
-  public readonly registrationSignal = signal<Result | null>(null)
-  public readonly getUserSignal = signal<Partial<GetUserResponse> | null>(null)
-  public readonly logoutSignal = signal<Result | null>(null)
-  public readonly isAuthSignal = signal<boolean>(false)
-  public readonly checkUserSignal = signal<CheckUserResponse | null>(null)
-
-  createUser(user: User){
+  createUser(user: User): Result{
     const users = localStorage.getItem('users')
 
     if(users === null){
       localStorage.setItem('users', JSON.stringify([user]))
       localStorage.setItem('currentUser', JSON.stringify(user))
-
-      this.registrationSignal.set({
+      
+      return {
         success: true,
         message: "success"
-      })
-      this.isAuthSignal.set(true)
+      }
     } else {
       const userList: User[] = JSON.parse(users)
 
@@ -36,33 +29,30 @@ export class AuthService {
         localStorage.setItem('users', JSON.stringify([...userList, user]))
         localStorage.setItem('currentUser', JSON.stringify(user))
         
-        this.registrationSignal.set({
+        return {
           success: true,
           message: "success"
-        })
-        this.isAuthSignal.set(true)
+        }
       } else {
-        this.registrationSignal.set({
+        return {
           success: false,
           message: "User already exists"
-        })
+        }
       }
       
     }
   }
 
-  loginUser(email: string, password: string){
+  loginUser(email: string, password: string): Partial<GetUserResponse>{
     const users = localStorage.getItem('users')
 
     if(users === null) {
-      this.getUserSignal.set({
+      return {
         result: {
           success: false,
           message: 'User not exists'
         }
-      })
-      
-      return
+      }
     }
 
     const userList: User[] = JSON.parse(users)
@@ -70,56 +60,53 @@ export class AuthService {
     const user = userList.filter(u => u.email === email && u.password === password)
 
     if(user.length === 0) {
-      this.getUserSignal.set({
+      return {
         result: {
           success: false,
           message: 'User not exists'
         }
-      })
-
-      return
+      }
     }
 
     localStorage.setItem('currentUser', JSON.stringify(user[0]))
 
-    this.getUserSignal.set({
+    return {
       user: user[0],
       result: {
         success: true,
         message: 'success'
       }
-    })
-    this.isAuthSignal.set(true)
+    }
   }
 
-  logout(){
+  logout(): Result{
     localStorage.removeItem('currentUser')
-    this.logoutSignal.set({
+
+    return {
       success: true,
       message: 'User logged out successfully'
-    })
-    this.isAuthSignal.set(false)
+    }
   }
 
-  checkLogged(){
+  checkLogged(): CheckUserResponse{
     const userStr = localStorage.getItem('currentUser')
 
     if(!userStr) {
-      this.checkUserSignal.set({
+      return {
         logged: false,
         user: null,
         message: 'User not authenticated',
         success: true
-      })
+      }
     } else {
       const user: User = JSON.parse(userStr)
 
-      this.checkUserSignal.set({
+      return {
         logged: true,
         user: user,
         message: 'User authenticated',
         success: true
-      })
+      }
     }
   }
 }
