@@ -6,13 +6,17 @@ import { provideStore } from '@ngrx/store';
 import { appReducer } from './reducers/app.reducer';
 import { provideEffects } from '@ngrx/effects';
 import { UserEffect } from './effects/user.effect';
+import { MovementsEffect } from './effects/movements.effect';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes),
     provideStore(appReducer),
-    provideEffects([UserEffect]),
+    provideEffects([
+      UserEffect,
+      MovementsEffect
+    ]),
     provideStoreDevtools({
       maxAge: 25
     }),

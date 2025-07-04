@@ -1,8 +1,10 @@
-import { Component, inject } from '@angular/core';
+import { Component, effect, inject, Signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { AppState } from './reducers/app.reducer';
 import { checkLogged } from './actions/user.actions';
+import { User } from './models/user.model';
+import { getMovements } from './actions/movements.actions';
 
 @Component({
   selector: 'app-root',
@@ -12,8 +14,16 @@ import { checkLogged } from './actions/user.actions';
 })
 export class AppComponent {
   store = inject(Store<AppState>)
+  user: Signal<User | null> = this.store.selectSignal(store => store.user.user)
   
   constructor(){
     this.store.dispatch(checkLogged())
+    
+    effect(() => {
+      const email = this.user()?.email
+      if(email !== undefined){
+        this.store.dispatch(getMovements({email}))
+      }
+    })
   }
 }
