@@ -1,6 +1,6 @@
 import { ActionReducer, createReducer, on } from "@ngrx/store";
 import { Movement } from "../models/movement.model";
-import { addMovement, addMovementError, addMovementSuccess, getMovements, getMovementsError, getMovementsSuccess } from "../actions/movements.actions";
+import { addMovement, addMovementError, addMovementSuccess, deleteMovement, deleteMovementError, deleteMovementSuccess, getMovements, getMovementsError, getMovementsSuccess } from "../actions/movements.actions";
 
 export interface MovementsState {
     movements: Movement[],
@@ -45,6 +45,21 @@ const _movementsReducer = createReducer(
         loading: false
     })),
     on(addMovementError, (state, {payload}) => ({
+        ...state,
+        loading: false,
+        error: payload
+    })),
+    on(deleteMovement, state => ({
+        ...state,
+        loading: true,
+        error: null
+    })),
+    on(deleteMovementSuccess, (state, {movements}) => ({
+        ...state,
+        loading: false,
+        movements: [...movements]
+    })),
+    on(deleteMovementError, (state, {payload}) => ({
         ...state,
         loading: false,
         error: payload

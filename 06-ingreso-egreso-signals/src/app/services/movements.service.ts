@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Movement } from '../models/movement.model';
 import { GetMovementsResponse } from '../models/dto/get-movements.response';
 import { Result } from '../models/result.model';
+import { DeleteMovementResponse } from '../models/dto/delete-movement.response';
 
 @Injectable({
   providedIn: 'root'
@@ -31,18 +32,38 @@ export class MovementsService {
     }
   }
 
-  deleteItem(uid: string){
+  deleteItem(uid: string): DeleteMovementResponse{
     const movements = localStorage.getItem(this.movementsKey)
     
-    if(movements === null) {return false}
+    if(movements === null) {
+      return {
+        deletedMovement: null,
+        success: false,
+        message: 'Cannot find movements'
+      }
+    }
 
     const ieList: Movement[] = JSON.parse(movements)
+
+    const movement = ieList.filter(ie => ie.uid === uid)
+
+    if(movement.length === 0){
+      return {
+        deletedMovement: null,
+        success: false,
+        message: 'Movement not found'
+      }
+    }
 
     const newIeList = ieList.filter(ie => ie.uid !== uid)
     
     localStorage.setItem(this.movementsKey, JSON.stringify(newIeList))  
     
-    return true
+    return {
+      deletedMovement: movement[0],
+      success: true,
+      message: 'Movement deleted successfully'
+    }
   }
 
   getMovementsByEmail(email: string): GetMovementsResponse{

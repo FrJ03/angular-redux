@@ -1,7 +1,7 @@
 import { inject } from "@angular/core";
 import { Actions, createEffect, ofType } from "@ngrx/effects";
 import { MovementsService } from "../services/movements.service";
-import { addMovement, addMovementError, addMovementSuccess, getMovements, getMovementsError, getMovementsSuccess } from "../actions/movements.actions";
+import { addMovement, addMovementError, addMovementSuccess, deleteMovement, deleteMovementError, deleteMovementSuccess, getMovements, getMovementsError, getMovementsSuccess } from "../actions/movements.actions";
 import { mergeMap, of } from "rxjs";
 
 export class MovementsEffect {
@@ -30,6 +30,22 @@ export class MovementsEffect {
                 return result.success
                     ? of(addMovementSuccess({movement}))
                     : of(addMovementError({payload: result.message}))
+            })
+        )
+    )
+
+    deleteMovement$ = createEffect(
+        () => this.actions.pipe(
+            ofType(deleteMovement),
+            mergeMap(({uid}) => {
+                const result = this.movementsService.deleteItem(uid)
+
+                return result.success && result.deletedMovement
+                    ? of(deleteMovementSuccess({movements: this.movementsService
+                        .getMovementsByEmail(result.deletedMovement.email)
+                        .movements
+                    }))
+                    : of(deleteMovementError({payload: result.success}))
             })
         )
     )

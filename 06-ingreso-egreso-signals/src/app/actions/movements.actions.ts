@@ -30,3 +30,18 @@ export const addMovementError = createAction(
     '[Movements] Add Movement Error',
     props<{payload: any}>()
 )
+
+export const deleteMovement = createAction(
+    '[Movements] Delete Movement',
+    props<{uid: string}>()
+)
+
+export const deleteMovementSuccess = createAction(
+    '[Movements] Delete Movement Success',
+    props<{movements: Movement[]}>()
+)
+
+export const deleteMovementError = createAction(
+    '[Movements] Delete Movement Error',
+    props<{payload: any}>()
+)
