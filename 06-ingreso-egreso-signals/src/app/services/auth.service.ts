@@ -2,6 +2,7 @@ import { Injectable, signal } from '@angular/core';
 import { User } from '../models/user.model';
 import { Result } from '../models/result.model';
 import { GetUserResponse } from '../models/dto/get-user.response';
+import { CheckUserResponse } from '../models/dto/check-user.response';
 
 @Injectable({
   providedIn: 'root'
@@ -10,6 +11,8 @@ export class AuthService {
   public readonly registrationSignal = signal<Result | null>(null)
   public readonly getUserSignal = signal<Partial<GetUserResponse> | null>(null)
   public readonly logoutSignal = signal<Result | null>(null)
+  public readonly isAuthSignal = signal<boolean>(false)
+  public readonly checkUserSignal = signal<CheckUserResponse | null>(null)
 
   createUser(user: User){
     const users = localStorage.getItem('users')
@@ -22,6 +25,7 @@ export class AuthService {
         success: true,
         message: "success"
       })
+      this.isAuthSignal.set(true)
     } else {
       const userList: User[] = JSON.parse(users)
 
@@ -36,6 +40,7 @@ export class AuthService {
           success: true,
           message: "success"
         })
+        this.isAuthSignal.set(true)
       } else {
         this.registrationSignal.set({
           success: false,
@@ -68,7 +73,7 @@ export class AuthService {
       this.getUserSignal.set({
         result: {
           success: false,
-          message: 'User not exists 2'
+          message: 'User not exists'
         }
       })
 
@@ -84,6 +89,7 @@ export class AuthService {
         message: 'success'
       }
     })
+    this.isAuthSignal.set(true)
   }
 
   logout(){
@@ -92,5 +98,28 @@ export class AuthService {
       success: true,
       message: 'User logged out successfully'
     })
+    this.isAuthSignal.set(false)
+  }
+
+  checkLogged(){
+    const userStr = localStorage.getItem('currentUser')
+
+    if(!userStr) {
+      this.checkUserSignal.set({
+        logged: false,
+        user: null,
+        message: 'User not authenticated',
+        success: true
+      })
+    } else {
+      const user: User = JSON.parse(userStr)
+
+      this.checkUserSignal.set({
+        logged: true,
+        user: user,
+        message: 'User authenticated',
+        success: true
+      })
+    }
   }
 }

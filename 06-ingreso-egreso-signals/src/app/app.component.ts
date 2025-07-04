@@ -1,5 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+import { Store } from '@ngrx/store';
+import { AppState } from './reducers/app.reducer';
+import { checkLogged } from './actions/user.actions';
 
 @Component({
   selector: 'app-root',
@@ -8,5 +11,9 @@ import { RouterOutlet } from '@angular/router';
   styleUrl: './app.component.css'
 })
 export class AppComponent {
-  title = '06-ingreso-egreso-signals';
+  store = inject(Store<AppState>)
+  
+  constructor(){
+    this.store.dispatch(checkLogged())
+  }
 }

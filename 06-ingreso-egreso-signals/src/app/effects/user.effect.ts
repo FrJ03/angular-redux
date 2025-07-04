@@ -1,6 +1,6 @@
 import { inject, Injectable } from "@angular/core";
 import { Actions, createEffect, ofType } from '@ngrx/effects'
-import { logoutUser, logoutUserError, logoutUserSuccess, logUser, logUserError, logUserSuccess, saveUser, saveUserError, saveUserSuccess } from "../actions/user.actions";
+import { checkLogged, checkLoggedError, checkLoggedSuccess, logoutUser, logoutUserError, logoutUserSuccess, logUser, logUserError, logUserSuccess, saveUser, saveUserError, saveUserSuccess } from "../actions/user.actions";
 import { catchError, map, merge, mergeMap, of } from "rxjs";
 import { AuthService } from "../services/auth.service";
 import { toObservable } from '@angular/core/rxjs-interop'
@@ -12,6 +12,7 @@ export class UserEffect {
     registration$ = toObservable(this.authService.registrationSignal)
     login$ = toObservable(this.authService.getUserSignal)
     logout$ = toObservable(this.authService.logoutSignal)
+    check$ = toObservable(this.authService.checkUserSignal)
     
     saveUser$ = createEffect(
         () => this.actions.pipe(
@@ -64,6 +65,33 @@ export class UserEffect {
                             : logoutUserError({payload: result?.message ?? 'Unexpected error'})
                         ),
                         catchError(err => of(logoutUserError({payload: err})))
+                    )
+                }
+            )
+        )
+    )
+
+    checkLogged$ = createEffect(
+        () => this.actions.pipe(
+            ofType(checkLogged),
+            mergeMap(
+                () => {
+                    this.authService.checkLogged()
+
+                    return this.check$.pipe(
+                        map(result => {
+                            if(!result?.success){
+                                return checkLoggedError({payload: result?.message})
+                                
+                            }
+
+                            if(result.logged && result.user){
+                                this.authService.loginUser(result.user.email, result.user.password)
+                            }
+
+                            return checkLoggedSuccess({logged: result.logged, user: result.user})
+                        }),
+                        catchError(err => of(checkLoggedError({payload: err})))
                     )
                 }
             )

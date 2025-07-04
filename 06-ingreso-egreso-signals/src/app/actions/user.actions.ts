@@ -43,3 +43,17 @@ export const logoutUserError = createAction(
     '[User] Logout User Error',
     props<{payload: any}>()
 )
+
+export const checkLogged = createAction(
+    '[User] Check Logged User'
+)
+
+export const checkLoggedSuccess = createAction(
+    '[User] Check Logged User Success',
+    props<{logged: boolean, user: User | null}>()
+)
+
+export const checkLoggedError = createAction(
+    '[User] Check Logged User Error',
+    props<{payload: any}>()
+)
