@@ -1,6 +1,6 @@
 import { inject, Injectable } from "@angular/core";
 import { Actions, createEffect, ofType } from '@ngrx/effects'
-import { saveUser, saveUserError, saveUserSuccess } from "../actions/user.actions";
+import { logUser, logUserError, logUserSuccess, saveUser, saveUserError, saveUserSuccess } from "../actions/user.actions";
 import { catchError, map, mergeMap, of } from "rxjs";
 import { AuthService } from "../services/auth.service";
 import { toObservable } from '@angular/core/rxjs-interop'
@@ -10,6 +10,7 @@ export class UserEffect {
     actions = inject(Actions)
     authService = inject(AuthService)
     registration$ = toObservable(this.authService.registrationSignal)
+    login$ = toObservable(this.authService.getUserSignal)
     
     saveUser$ = createEffect(
         () => this.actions.pipe(
@@ -27,6 +28,25 @@ export class UserEffect {
                             catchError(err => of(saveUserError({payload: err})))
                         )
                 }  
+            )
+        )
+    )
+
+    getUser$ = createEffect(
+        () => this.actions.pipe(
+            ofType(logUser),
+            mergeMap(
+                ({email, password}) => {
+                    this.authService.loginUser(email, password)
+
+                    return this.login$.pipe(
+                        map(response => response && response.user && response.result?.success
+                            ? logUserSuccess({user: response.user})
+                            : logUserError({payload: response?.result?.message ?? 'Login Error'})
+                        ),
+                        catchError(err => of(logUserError({payload: err})))
+                    )
+                }
             )
         )
     )

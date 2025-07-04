@@ -1,6 +1,6 @@
 import { ActionReducer, createReducer, on } from "@ngrx/store";
 import { User } from "../models/user.model";
-import { saveUser, saveUserError, saveUserSuccess } from "../actions/user.actions";
+import { logUser, logUserError, logUserSuccess, saveUser, saveUserError, saveUserSuccess } from "../actions/user.actions";
 
 export interface UserState {
     user: User | null,
@@ -18,7 +18,8 @@ const _userReducer: ActionReducer<UserState> = createReducer(
     initialState,
     on(saveUser, state => ({
         ...state,
-        loading: true
+        loading: true,
+        error: null
     })),
     on(saveUserSuccess, (state, {user}) => ({
         ...state,
@@ -30,6 +31,22 @@ const _userReducer: ActionReducer<UserState> = createReducer(
         user: null,
         error: payload,
         loading: false
+    })),
+    on(logUser, state => ({
+        ...state,
+        loading: true,
+        error: null
+    })),
+    on(logUserSuccess, (state, {user}) => ({
+        ...state,
+        user: user,
+        loading: false
+    })),
+    on(logUserError, (state, {payload}) => ({
+        ...state,
+        user: null,
+        loading: false,
+        error: payload
     }))
 )
 

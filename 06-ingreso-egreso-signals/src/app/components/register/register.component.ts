@@ -1,15 +1,16 @@
-import { Component, inject, Signal } from '@angular/core';
+import { Component, effect, inject, Signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { signalState } from '@ngrx/signals'
 import { AppState } from '../../reducers/app.reducer';
 import { Store } from '@ngrx/store';
 import { User } from '../../models/user.model';
 import { saveUser } from '../../actions/user.actions';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-register',
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, RouterLink],
   templateUrl: './register.component.html'
 })
 export class RegisterComponent{
@@ -24,6 +25,30 @@ export class RegisterComponent{
 
   loading: Signal<boolean> = this.store.selectSignal(state => state.user.loading)
   error = this.store.selectSignal(state => state.user.error)
+  user: Signal<User | null> = this.store.selectSignal(state => state.user.user)
+
+  constructor() {
+    effect(() => {
+      if(this.error()){
+        Swal.fire({
+          title: 'Oops...',
+          text: 'User already exists',
+          icon: 'error'
+        })
+      }
+    })
+    effect(() => {
+      if(this.user()){
+        Swal.fire({
+          title: 'Ok',
+          text: 'User registered successfully',
+          icon: 'success'
+        })
+
+        this.router.navigateByUrl('')
+      }
+    })
+  }
 
   registerUser(){
 
@@ -36,7 +61,5 @@ export class RegisterComponent{
     )
 
     this.store.dispatch(saveUser({user: newUser}))
-
-    this.router.navigateByUrl('')
   }
 }
