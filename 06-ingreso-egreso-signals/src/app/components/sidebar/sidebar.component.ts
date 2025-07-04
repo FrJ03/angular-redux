@@ -28,7 +28,7 @@ export class SidebarComponent {
       }
     })
     effect(() => {
-      if(this.user()){
+      if(this.user() === null){
         Swal.fire({
           title: 'Ok',
           text: 'User logged out successfully',
