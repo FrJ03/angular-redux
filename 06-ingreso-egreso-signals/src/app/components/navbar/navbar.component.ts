@@ -1,6 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { AppState } from '../../reducers/app.reducer';
+import { selectUser } from '../../selectors/user.selector';
 
 @Component({
   selector: 'app-navbar',
@@ -10,5 +11,5 @@ import { AppState } from '../../reducers/app.reducer';
 export class NavbarComponent {
   private store = inject(Store<AppState>)
 
-  user = this.store.selectSignal(store => store.user.user)
+  user = this.store.selectSignal(selectUser)
 }

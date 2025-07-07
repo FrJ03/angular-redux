@@ -4,6 +4,7 @@ import { AppState } from '../../reducers/app.reducer';
 import { Router, RouterLink } from '@angular/router';
 import { logoutUser } from '../../actions/user.actions';
 import Swal from 'sweetalert2';
+import { selectError, selectUser } from '../../selectors/user.selector';
 
 @Component({
   selector: 'app-sidebar',
@@ -14,8 +15,8 @@ export class SidebarComponent {
   store = inject(Store<AppState>)
   router = inject(Router)
 
-  user = this.store.selectSignal(store => store.user.user)
-  error = this.store.selectSignal(store => store.user.error)
+  user = this.store.selectSignal(selectUser)
+  error = this.store.selectSignal(selectError)
 
   constructor(){
     effect(() => {

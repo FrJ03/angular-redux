@@ -7,6 +7,7 @@ import { User } from '../../models/user.model';
 import { saveUser } from '../../actions/user.actions';
 import { Router, RouterLink } from '@angular/router';
 import Swal from 'sweetalert2';
+import { selectError, selectLoading, selectUser } from '../../selectors/user.selector';
 
 @Component({
   selector: 'app-register',
@@ -23,9 +24,9 @@ export class RegisterComponent{
     password: new FormControl('', [Validators.required])
   });
 
-  loading: Signal<boolean> = this.store.selectSignal(state => state.user.loading)
-  error = this.store.selectSignal(state => state.user.error)
-  user: Signal<User | null> = this.store.selectSignal(state => state.user.user)
+  loading: Signal<boolean> = this.store.selectSignal(selectLoading)
+  error = this.store.selectSignal(selectError)
+  user: Signal<User | null> = this.store.selectSignal(selectUser)
 
   constructor() {
     effect(() => {

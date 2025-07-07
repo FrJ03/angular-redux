@@ -5,6 +5,7 @@ import { Store } from '@ngrx/store';
 import { logUser } from '../../actions/user.actions';
 import Swal, {} from 'sweetalert2'
 import { User } from '../../models/user.model';
+import { selectError, selectLoading, selectUser } from '../../selectors/user.selector';
 
 @Component({
   selector: 'app-login',
@@ -20,9 +21,9 @@ export class LoginComponent{
     password: new FormControl('', [Validators.required])
   })
 
-  loading: Signal<boolean> = this.store.selectSignal(store => store.user.loading)
-  error = this.store.selectSignal(store => store.user.error)
-  user: Signal<User | null> = this.store.selectSignal(store => store.user.user)
+  loading: Signal<boolean> = this.store.selectSignal(selectLoading)
+  error = this.store.selectSignal(selectError)
+  user: Signal<User | null> = this.store.selectSignal(selectUser)
 
   constructor(){
     effect(() => {

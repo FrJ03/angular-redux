@@ -5,6 +5,7 @@ import { AppState } from './reducers/app.reducer';
 import { checkLogged } from './actions/user.actions';
 import { User } from './models/user.model';
 import { getMovements } from './actions/movements.actions';
+import { selectUser } from './selectors/user.selector';
 
 @Component({
   selector: 'app-root',
@@ -14,7 +15,7 @@ import { getMovements } from './actions/movements.actions';
 })
 export class AppComponent {
   store = inject(Store<AppState>)
-  user: Signal<User | null> = this.store.selectSignal(store => store.user.user)
+  user: Signal<User | null> = this.store.selectSignal(selectUser)
   
   constructor(){
     this.store.dispatch(checkLogged())
