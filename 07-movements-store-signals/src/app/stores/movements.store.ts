@@ -1,5 +1,5 @@
 import { Movement } from "../models/movement.model";
-import { patchState, signalStore, withMethods, withState } from "@ngrx/signals";
+import { patchState, signalStore, withMethods, withProps, withState } from "@ngrx/signals";
 import { MovementsService } from "../services/movements.service";
 import { inject } from "@angular/core";
 
@@ -18,10 +18,11 @@ const initialState: MovementsState = {
 export const MovementsStore = signalStore(
   { providedIn: 'root' },
   withState(initialState),
-  withMethods((store) => {
-    const movementsService = inject(MovementsService); // ✅ valid injection context
-
-    return {
+  withProps(store => ({
+    store,
+    movementsService: inject(MovementsService)
+  })),
+  withMethods(({store, movementsService}) => ({
       async loadMovements(email: string): Promise<void> {
         patchState(store, (state) => ({
           ...state,
@@ -99,7 +100,6 @@ export const MovementsStore = signalStore(
         }
 
       }
-    };
-  })
+    }))
 );
 
