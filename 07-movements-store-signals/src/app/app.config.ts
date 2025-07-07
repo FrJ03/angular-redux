@@ -3,21 +3,16 @@ import { provideRouter } from '@angular/router';
 import { routes } from './app.routes';
 import {provideStoreDevtools} from '@ngrx/store-devtools'
 import { provideStore } from '@ngrx/store';
-import { appReducer } from './reducers/app.reducer';
-import { provideEffects } from '@ngrx/effects';
-import { UserEffect } from './effects/user.effect';
-import { MovementsEffect } from './effects/movements.effect';
 import { provideCharts, withDefaultRegisterables } from 'ng2-charts';
+import { MovementsStore } from './stores/movements.store';
+import { UserStore } from './stores/user.store';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes),
-    provideStore(appReducer),
-    provideEffects([
-      UserEffect,
-      MovementsEffect
-    ]),
+    MovementsStore,
+    UserStore,
     provideStoreDevtools({
       maxAge: 25
     }),

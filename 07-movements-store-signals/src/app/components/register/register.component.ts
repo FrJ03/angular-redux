@@ -1,12 +1,9 @@
-import { Component, effect, inject, Signal } from '@angular/core';
+import { Component, effect, inject, signal, Signal, WritableSignal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { signalState } from '@ngrx/signals'
-import { AppState } from '../../reducers/app.reducer';
-import { Store } from '@ngrx/store';
 import { User } from '../../models/user.model';
-import { saveUser } from '../../actions/user.actions';
 import { Router, RouterLink } from '@angular/router';
 import Swal from 'sweetalert2';
+import { UserStore } from '../../stores/user.store';
 
 @Component({
   selector: 'app-register',
@@ -14,7 +11,7 @@ import Swal from 'sweetalert2';
   templateUrl: './register.component.html'
 })
 export class RegisterComponent{
-  private store = inject(Store)
+  private userStore = inject(UserStore)
   private router = inject(Router)
 
   registerForm: FormGroup = new FormGroup({
@@ -23,19 +20,21 @@ export class RegisterComponent{
     password: new FormControl('', [Validators.required])
   });
 
-  loading: Signal<boolean> = this.store.selectSignal(state => state.user.loading)
-  error = this.store.selectSignal(state => state.user.error)
-  user: Signal<User | null> = this.store.selectSignal(state => state.user.user)
+  loading: Signal<boolean> = this.userStore.loading
+  error = this.userStore.error
+  user: Signal<User | null> = this.userStore.user
+  isSaving: WritableSignal<boolean> = signal<boolean>(false)
 
   constructor() {
     effect(() => {
-      if(this.error()){
+      if(this.isSaving() && this.error()){
         Swal.fire({
           title: 'Oops...',
           text: 'User already exists',
           icon: 'error'
         })
       }
+      this.isSaving.set(false)
     })
     effect(() => {
       if(this.user()){
@@ -44,6 +43,7 @@ export class RegisterComponent{
           text: 'User registered successfully',
           icon: 'success'
         })
+        this.isSaving.set(false)
 
         this.router.navigateByUrl('')
       }
@@ -59,7 +59,8 @@ export class RegisterComponent{
       this.registerForm.value.username,
       this.registerForm.value.password
     )
-
-    this.store.dispatch(saveUser({user: newUser}))
+    
+    this.isSaving.set(true)
+    this.userStore.saveUser(newUser)
   }
 }

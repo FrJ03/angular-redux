@@ -1,10 +1,9 @@
-import { Component, effect, inject, Signal } from '@angular/core';
+import { Component, effect, inject, signal, Signal, WritableSignal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms'
 import { Router, RouterLink } from '@angular/router';
-import { Store } from '@ngrx/store';
-import { logUser } from '../../actions/user.actions';
 import Swal, {} from 'sweetalert2'
 import { User } from '../../models/user.model';
+import { UserStore } from '../../stores/user.store';
 
 @Component({
   selector: 'app-login',
@@ -12,7 +11,7 @@ import { User } from '../../models/user.model';
   templateUrl: './login.component.html'
 })
 export class LoginComponent{
-  private store = inject(Store)
+  private userStore = inject(UserStore)
   private router = inject(Router)
 
   loginForm: FormGroup = new FormGroup({
@@ -20,18 +19,20 @@ export class LoginComponent{
     password: new FormControl('', [Validators.required])
   })
 
-  loading: Signal<boolean> = this.store.selectSignal(store => store.user.loading)
-  error = this.store.selectSignal(store => store.user.error)
-  user: Signal<User | null> = this.store.selectSignal(store => store.user.user)
+  loading: Signal<boolean> = this.userStore.loading
+  error = this.userStore.error
+  user: Signal<User | null> = this.userStore.user
+  isLoggingUser: WritableSignal<boolean> = signal<boolean>(false)
 
   constructor(){
     effect(() => {
-      if(this.error()){
+      if(this.isLoggingUser() && this.error()){
         Swal.fire({
           title: 'Oops...',
           text: 'User not found',
           icon: 'error'
         })
+        this.isLoggingUser.set(false)
       }
     })
     effect(() => {
@@ -41,6 +42,7 @@ export class LoginComponent{
           text: 'User logged successfully',
           icon: 'success'
         })
+        this.isLoggingUser.set(false)
 
         this.router.navigateByUrl('')
       }
@@ -48,9 +50,11 @@ export class LoginComponent{
   }
 
   login(){
-    this.store.dispatch(logUser({
-      email: this.loginForm.value.email,
-      password: this.loginForm.value.password
-    }))
+    this.isLoggingUser.set(true)
+    
+    this.userStore.logUser(
+      this.loginForm.value.email,
+      this.loginForm.value.password
+    )
   }
 }

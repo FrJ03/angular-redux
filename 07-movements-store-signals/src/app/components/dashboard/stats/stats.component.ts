@@ -1,9 +1,9 @@
 import { CommonModule } from '@angular/common';
 import { Component, effect, inject, Signal } from '@angular/core';
-import { Store } from '@ngrx/store';
 import { Movement } from '../../../models/movement.model';
 import {BaseChartDirective} from 'ng2-charts'
 import { ChartData } from 'chart.js';
+import { MovementsStore } from '../../../stores/movements.store';
 
 @Component({
   selector: 'app-stats',
@@ -11,9 +11,9 @@ import { ChartData } from 'chart.js';
   templateUrl: './stats.component.html'
 })
 export class StatsComponent {
-  store = inject(Store)
+  private movementsStore = inject(MovementsStore)
 
-  movements: Signal<Movement[]> = this.store.selectSignal(store => store.movements.movements)
+  movements: Signal<Movement[]> = this.movementsStore.movements
   
   ingresos: number = 0
   egresos: number = 0

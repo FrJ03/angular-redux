@@ -2,11 +2,11 @@ import { inject, Injectable } from '@angular/core';
 import { CanMatch, CanMatchFn, Route, Router } from '@angular/router';
 import { AuthService } from './auth.service';
 
-export const authCanMatch: CanMatchFn = (route: Route) => {
+export const authCanMatch: CanMatchFn = async (route: Route) => {
   const authService = inject(AuthService)
   const router = inject(Router)
 
-  const result = authService.checkLogged()
+  const result = await authService.checkLogged()
 
   if(
     route.path 

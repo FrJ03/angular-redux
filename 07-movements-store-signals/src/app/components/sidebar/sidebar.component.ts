@@ -1,9 +1,7 @@
-import { Component, effect, inject } from '@angular/core';
-import { Store } from '@ngrx/store';
-import { AppState } from '../../reducers/app.reducer';
+import { Component, effect, inject, signal, WritableSignal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
-import { logoutUser } from '../../actions/user.actions';
 import Swal from 'sweetalert2';
+import { UserStore } from '../../stores/user.store';
 
 @Component({
   selector: 'app-sidebar',
@@ -11,36 +9,40 @@ import Swal from 'sweetalert2';
   templateUrl: './sidebar.component.html'
 })
 export class SidebarComponent {
-  store = inject(Store<AppState>)
+  userStore = inject(UserStore)
   router = inject(Router)
 
-  user = this.store.selectSignal(store => store.user.user)
-  error = this.store.selectSignal(store => store.user.error)
+  user = this.userStore.user
+  error = this.userStore.error
+  isLoggingOut: WritableSignal<boolean> = signal<boolean>(false)
 
   constructor(){
     effect(() => {
-      if(this.error()){
+      if(this.isLoggingOut() && this.error()){
         Swal.fire({
           title: 'Oops...',
           text: this.error(),
           icon: 'error'
         })
+        this.isLoggingOut.set(false)
       }
     })
     effect(() => {
-      if(this.user() === null){
+      if(this.isLoggingOut() && this.user() === null){
         Swal.fire({
           title: 'Ok',
           text: 'User logged out successfully',
           icon: 'success'
         })
+        this.isLoggingOut.set(false)
 
         this.router.navigateByUrl('/login')
       }
     })
   }
 
-  logout(){
-    this.store.dispatch(logoutUser())
+  async logout(){
+    this.isLoggingOut.set(true)
+    await this.userStore.logout()
   }
 }

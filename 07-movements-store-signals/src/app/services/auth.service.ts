@@ -8,8 +8,9 @@ import { CheckUserResponse } from '../models/dto/check-user.response';
   providedIn: 'root'
 })
 export class AuthService {
-  createUser(user: User): Result{
+  async createUser(user: User): Promise<Result>{
     const users = localStorage.getItem('users')
+    await new Promise(resolve => setTimeout(resolve, 1000))
 
     if(users === null){
       localStorage.setItem('users', JSON.stringify([user]))
@@ -43,8 +44,10 @@ export class AuthService {
     }
   }
 
-  loginUser(email: string, password: string): Partial<GetUserResponse>{
+  async loginUser(email: string, password: string): Promise<Partial<GetUserResponse>>{
     const users = localStorage.getItem('users')
+
+    await new Promise(resolve => setTimeout(resolve, 1000))
 
     if(users === null) {
       return {
@@ -79,8 +82,10 @@ export class AuthService {
     }
   }
 
-  logout(): Result{
+  async logout(): Promise<Result>{
     localStorage.removeItem('currentUser')
+
+    await new Promise(resolve => setTimeout(resolve, 1000))
 
     return {
       success: true,
@@ -88,8 +93,10 @@ export class AuthService {
     }
   }
 
-  checkLogged(): CheckUserResponse{
+  async checkLogged(): Promise<CheckUserResponse>{
     const userStr = localStorage.getItem('currentUser')
+
+    await new Promise(resolve => setTimeout(resolve, 1000))
 
     if(!userStr) {
       return {

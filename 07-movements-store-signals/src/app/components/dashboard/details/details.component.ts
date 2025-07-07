@@ -1,12 +1,9 @@
 import { Component, effect, inject, signal, Signal, WritableSignal } from '@angular/core';
-import { Store } from '@ngrx/store';
-import { AppState } from '../../../reducers/app.reducer';
 import { Movement } from '../../../models/movement.model';
 import { CommonModule } from '@angular/common';
 import { MovementsService } from '../../../services/movements.service';
 import Swal from 'sweetalert2';
-import { deleteMovement } from '../../../actions/movements.actions';
-import { WritableStateSource } from '@ngrx/signals';
+import { MovementsStore } from '../../../stores/movements.store';
 
 @Component({
   selector: 'app-details',
@@ -14,13 +11,13 @@ import { WritableStateSource } from '@ngrx/signals';
   templateUrl: './details.component.html'
 })
 export class DetailsComponent {
-  store = inject(Store<AppState>)
   movementsService = inject(MovementsService)
+  private movementsStore = inject(MovementsStore)
 
-  movements: Signal<Movement[]> = this.store.selectSignal(store => store.movements.movements)
-  error = this.store.selectSignal(store => store.movements.error)
+  movements: Signal<Movement[]> = this.movementsStore.movements
+  error = this.movementsStore.error
   isDelProcessing: WritableSignal<boolean> = signal<boolean>(false)
-  loading = this.store.selectSignal(store => store.movements.loading)
+  loading = this.movementsStore.loading
 
   constructor(){
     effect(() => {
@@ -35,6 +32,11 @@ export class DetailsComponent {
         this.isDelProcessing.set(false)
       }
     })
+    effect(() => {
+      if(this.movements()){
+        console.log(this.movements())
+      }
+    })
   }
 
   deleteItem(item: Movement){
@@ -44,11 +46,6 @@ export class DetailsComponent {
     }
     
     this.isDelProcessing.set(true)
-    this.store.dispatch(deleteMovement({uid: item.uid}))
-    /*if(item.uid && this.movementsService.deleteItem(item.uid)){
-      Swal.fire('Borrado', 'Elemento borrado', 'success')
-    } else {
-      Swal.fire('Error', 'No se ha podido borrar el elemento', 'error')
-    }*/
+    this.movementsStore.deleteMovement(item.uid)
   }
 }

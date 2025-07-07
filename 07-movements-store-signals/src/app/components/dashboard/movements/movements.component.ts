@@ -1,13 +1,12 @@
-import { afterNextRender, afterRender, Component, effect, inject, signal, Signal, WritableSignal } from '@angular/core';
+import { Component, effect, inject, signal, Signal, WritableSignal } from '@angular/core';
 import { MovementsType } from '../../../models/value-objects/movements.type';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Store } from '@ngrx/store';
-import { AppState } from '../../../reducers/app.reducer';
 import { User } from '../../../models/user.model';
 import { CommonModule } from '@angular/common';
-import { addMovement } from '../../../actions/movements.actions';
 import { Movement } from '../../../models/movement.model';
 import Swal from 'sweetalert2';
+import { MovementsStore } from '../../../stores/movements.store';
+import { UserStore } from '../../../stores/user.store';
 
 @Component({
   selector: 'app-movements',
@@ -15,17 +14,18 @@ import Swal from 'sweetalert2';
   templateUrl: './movements.component.html'
 })
 export class MovementsComponent {
-  store = inject(Store<AppState>)
+  private movementsStore = inject(MovementsStore)
+  private userStore = inject(UserStore)
 
   form: FormGroup = new FormGroup({
     description: new FormControl('', [Validators.required]),
     quantity: new FormControl('', [Validators.required]),
   })
   type: MovementsType = 'deposit'
-  user: Signal<User | null> = this.store.selectSignal(store => store.user.user)
-  loading: Signal<boolean> = this.store.selectSignal(store => store.movements.loading)
-  error = this.store.selectSignal(store => store.movements.error)
-  movements: Signal<Movement[]> = this.store.selectSignal(store => store.movements.movements)
+  user: Signal<User | null> = this.userStore.user
+  loading: Signal<boolean> = this.movementsStore.loading
+  error = this.movementsStore.error
+  movements: Signal<Movement[]> = this.movementsStore.movements
   isAddProcessing: WritableSignal<boolean> = signal<boolean>(false)
 
   constructor(){
@@ -65,28 +65,7 @@ export class MovementsComponent {
       currentUser.email
     )
 
-    this.store.dispatch(addMovement({movement}))
+    this.movementsStore.createMovement(movement)
     this.isAddProcessing.set(true)
-    /*
-    this.store.dispatch(isLoading())
-
-    if(this.ingresoForm.invalid || this.currentEmail === '') {
-      this.store.dispatch(stopLoading())
-      Swal.fire('Error', 'No se ha podido completar la operación', 'error')
-      return
-    }
-
-    const newIngresoEgreso = new IngresoEgreso(
-      this.ingresoForm.value.descripcion,
-      this.ingresoForm.value.cantidad,
-      this.type,
-      this.currentEmail
-    )
-
-    this.ingresoEgresoService.crearIngresoEgreso(newIngresoEgreso)
-
-    this.store.dispatch(stopLoading())
-
-    Swal.fire('Creado', 'Elemento creado', 'success')*/
   }
 }

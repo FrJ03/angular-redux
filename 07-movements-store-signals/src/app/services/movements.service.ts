@@ -12,17 +12,16 @@ export class MovementsService {
 
   constructor() { }
 
-  createMovement(movement: Movement): Result{
+  async createMovement(movement: Movement): Promise<Result>{
     const movements = localStorage.getItem(this.movementsKey)
 
-    console.log(movements)
-
+    await new Promise(resolve => setTimeout(resolve, 1000))
+  
     if(movements === null){
       localStorage.setItem(this.movementsKey, JSON.stringify([movement]))
     } else {
       const ieList: Movement[] = JSON.parse(movements)
 
-      console.log(ieList)
       localStorage.setItem(this.movementsKey, JSON.stringify([...ieList, movement]))
     }
 
@@ -32,8 +31,10 @@ export class MovementsService {
     }
   }
 
-  deleteItem(uid: string): DeleteMovementResponse{
+  async deleteItem(uid: string): Promise<DeleteMovementResponse>{
     const movements = localStorage.getItem(this.movementsKey)
+
+    await new Promise(resolve => setTimeout(resolve, 1000))
     
     if(movements === null) {
       return {
@@ -66,8 +67,10 @@ export class MovementsService {
     }
   }
 
-  getMovementsByEmail(email: string): GetMovementsResponse{
+  async getMovementsByEmail(email: string): Promise<GetMovementsResponse>{
     const movements = localStorage.getItem(this.movementsKey)
+
+    await new Promise(resolve => setTimeout(resolve, 1000))
     
     if(movements === null) {
       return {
