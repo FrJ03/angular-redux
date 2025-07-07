@@ -8,7 +8,8 @@ import { CommonModule } from '@angular/common';
 import { addMovement } from '../../../actions/movements.actions';
 import { Movement } from '../../../models/movement.model';
 import Swal from 'sweetalert2';
-import { selectUser } from '../../../selectors/user.selector';
+import { selectUser } from '../../../selectors/user.selectors';
+import { selectError, selectLoading, selectMovements } from '../../../selectors/movements.selectors';
 
 @Component({
   selector: 'app-movements',
@@ -23,10 +24,13 @@ export class MovementsComponent {
     quantity: new FormControl('', [Validators.required]),
   })
   type: MovementsType = 'deposit'
+  
   user: Signal<User | null> = this.store.selectSignal(selectUser)
-  loading: Signal<boolean> = this.store.selectSignal(store => store.movements.loading)
-  error = this.store.selectSignal(store => store.movements.error)
-  movements: Signal<Movement[]> = this.store.selectSignal(store => store.movements.movements)
+
+  movements: Signal<Movement[]> = this.store.selectSignal(selectMovements)
+  loading: Signal<boolean> = this.store.selectSignal(selectLoading)
+  error = this.store.selectSignal(selectError)
+
   isAddProcessing: WritableSignal<boolean> = signal<boolean>(false)
 
   constructor(){

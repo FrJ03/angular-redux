@@ -1,7 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { AppState } from '../../reducers/app.reducer';
-import { selectUser } from '../../selectors/user.selector';
+import { selectUser } from '../../selectors/user.selectors';
 
 @Component({
   selector: 'app-navbar',

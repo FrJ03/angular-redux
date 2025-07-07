@@ -5,7 +5,7 @@ import { Store } from '@ngrx/store';
 import { logUser } from '../../actions/user.actions';
 import Swal, {} from 'sweetalert2'
 import { User } from '../../models/user.model';
-import { selectError, selectLoading, selectUser } from '../../selectors/user.selector';
+import { selectError, selectLoading, selectUser } from '../../selectors/user.selectors';
 
 @Component({
   selector: 'app-login',

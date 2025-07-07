@@ -7,7 +7,7 @@ import { User } from '../../models/user.model';
 import { saveUser } from '../../actions/user.actions';
 import { Router, RouterLink } from '@angular/router';
 import Swal from 'sweetalert2';
-import { selectError, selectLoading, selectUser } from '../../selectors/user.selector';
+import { selectError, selectLoading, selectUser } from '../../selectors/user.selectors';
 
 @Component({
   selector: 'app-register',

@@ -4,7 +4,7 @@ import { AppState } from '../../reducers/app.reducer';
 import { Router, RouterLink } from '@angular/router';
 import { logoutUser } from '../../actions/user.actions';
 import Swal from 'sweetalert2';
-import { selectError, selectUser } from '../../selectors/user.selector';
+import { selectError, selectUser } from '../../selectors/user.selectors';
 
 @Component({
   selector: 'app-sidebar',

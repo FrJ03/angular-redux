@@ -4,6 +4,7 @@ import { Store } from '@ngrx/store';
 import { Movement } from '../../../models/movement.model';
 import {BaseChartDirective} from 'ng2-charts'
 import { ChartData } from 'chart.js';
+import { selectMovements } from '../../../selectors/movements.selectors';
 
 @Component({
   selector: 'app-stats',
@@ -13,7 +14,7 @@ import { ChartData } from 'chart.js';
 export class StatsComponent {
   store = inject(Store)
 
-  movements: Signal<Movement[]> = this.store.selectSignal(store => store.movements.movements)
+  movements: Signal<Movement[]> = this.store.selectSignal(selectMovements)
   
   ingresos: number = 0
   egresos: number = 0

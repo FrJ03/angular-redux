@@ -6,7 +6,7 @@ import { CommonModule } from '@angular/common';
 import { MovementsService } from '../../../services/movements.service';
 import Swal from 'sweetalert2';
 import { deleteMovement } from '../../../actions/movements.actions';
-import { WritableStateSource } from '@ngrx/signals';
+import { selectError, selectMovements, selectLoading } from '../../../selectors/movements.selectors';
 
 @Component({
   selector: 'app-details',
@@ -17,10 +17,11 @@ export class DetailsComponent {
   store = inject(Store<AppState>)
   movementsService = inject(MovementsService)
 
-  movements: Signal<Movement[]> = this.store.selectSignal(store => store.movements.movements)
-  error = this.store.selectSignal(store => store.movements.error)
+  movements: Signal<Movement[]> = this.store.selectSignal(selectMovements)
+  error = this.store.selectSignal(selectError)
+  loading = this.store.selectSignal(selectLoading)
+
   isDelProcessing: WritableSignal<boolean> = signal<boolean>(false)
-  loading = this.store.selectSignal(store => store.movements.loading)
 
   constructor(){
     effect(() => {
@@ -45,10 +46,5 @@ export class DetailsComponent {
     
     this.isDelProcessing.set(true)
     this.store.dispatch(deleteMovement({uid: item.uid}))
-    /*if(item.uid && this.movementsService.deleteItem(item.uid)){
-      Swal.fire('Borrado', 'Elemento borrado', 'success')
-    } else {
-      Swal.fire('Error', 'No se ha podido borrar el elemento', 'error')
-    }*/
   }
 }

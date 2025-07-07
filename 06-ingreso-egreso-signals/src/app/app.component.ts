@@ -5,7 +5,7 @@ import { AppState } from './reducers/app.reducer';
 import { checkLogged } from './actions/user.actions';
 import { User } from './models/user.model';
 import { getMovements } from './actions/movements.actions';
-import { selectUser } from './selectors/user.selector';
+import { selectUser } from './selectors/user.selectors';
 
 @Component({
   selector: 'app-root',
