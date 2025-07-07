@@ -35,6 +35,7 @@ export class LoginComponent{
         this.isLoggingUser.set(false)
       }
     })
+    
     effect(() => {
       if(this.user()){
         Swal.fire({
