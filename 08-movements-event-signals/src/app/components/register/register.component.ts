@@ -4,6 +4,8 @@ import { User } from '../../models/user.model';
 import { Router, RouterLink } from '@angular/router';
 import Swal from 'sweetalert2';
 import { UserStore } from '../../stores/user.store';
+import { Dispatcher } from '@ngrx/signals/events';
+import { saveUser } from '../../events/user.events';
 
 @Component({
   selector: 'app-register',
@@ -13,6 +15,7 @@ import { UserStore } from '../../stores/user.store';
 export class RegisterComponent{
   private userStore = inject(UserStore)
   private router = inject(Router)
+  private readonly dispatcher = inject(Dispatcher)
 
   registerForm: FormGroup = new FormGroup({
     username: new FormControl('', [Validators.required]),
@@ -61,6 +64,7 @@ export class RegisterComponent{
     )
     
     this.isSaving.set(true)
-    this.userStore.saveUser(newUser)
+    this.dispatcher.dispatch(saveUser.init({user: newUser}))
+    // this.userStore.saveUser(newUser)
   }
 }

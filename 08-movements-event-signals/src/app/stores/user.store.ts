@@ -2,6 +2,9 @@ import { inject } from "@angular/core"
 import { patchState, signalStore, withMethods, withProps, withState } from "@ngrx/signals"
 import { AuthService } from "../services/auth.service"
 import { User } from "../models/user.model"
+import { on, withEffects, withReducer } from "@ngrx/signals/events"
+import { saveUser } from "../events/user.events"
+import { userEffect } from "../effects/user.effect"
 
 export interface UserState {
     user: User | null,
@@ -24,42 +27,6 @@ export const UserStore = signalStore(
     })),
     withMethods(({store, authService}) => {
         return {
-            saveUser: async (user: User) => {
-                patchState(store, state => ({
-                    ...state,
-                    loading: true,
-                    error: null
-                }))
-        
-                const result = await authService.createUser(user)
-        
-                if(result.success){
-                    const logResult = await authService.loginUser(
-                        user.email,
-                        user.password
-                    )
-        
-                    if(logResult.result?.success) {
-                        patchState(store, state => ({
-                            ...state,
-                            loading: false,
-                            user: user
-                        }))
-                    } else {
-                        patchState(store, state => ({
-                            ...state,
-                            loading: false,
-                            error: logResult.result?.message ?? 'Login error'
-                        }))
-                    }
-                } else {
-                    patchState(store, state => ({
-                        ...state,
-                        loading: false,
-                        error: result.message
-                    }))
-                }
-            },
             logUser: async (email: string, password: string) => {
                 patchState(store, state => ({
                     ...state,
@@ -142,5 +109,25 @@ export const UserStore = signalStore(
                 }
             }
         }
-    })
+    }),
+    withReducer(
+        on(saveUser.init, (event, state) => ({
+            ...state,
+            loading: true,
+            error: null
+        })),
+        on(saveUser.success, (event, state) => ({
+            ...state,
+            loading: false,
+            user: event.payload.user
+        })),
+        on(saveUser.error, (event, state) => ({
+            ...state,
+            loading: false,
+            error: event.payload.error
+        }))
+    ),
+    withEffects(
+        userEffect
+    )
 )
