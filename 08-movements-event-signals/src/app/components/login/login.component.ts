@@ -4,6 +4,8 @@ import { Router, RouterLink } from '@angular/router';
 import Swal, {} from 'sweetalert2'
 import { User } from '../../models/user.model';
 import { UserStore } from '../../stores/user.store';
+import { Dispatcher } from '@ngrx/signals/events';
+import { logUser } from '../../events/user.events';
 
 @Component({
   selector: 'app-login',
@@ -13,6 +15,7 @@ import { UserStore } from '../../stores/user.store';
 export class LoginComponent{
   private userStore = inject(UserStore)
   private router = inject(Router)
+  private readonly dispatcher = inject(Dispatcher)
 
   loginForm: FormGroup = new FormGroup({
     email: new FormControl('', [Validators.required, Validators.email]),
@@ -53,9 +56,9 @@ export class LoginComponent{
   login(){
     this.isLoggingUser.set(true)
     
-    this.userStore.logUser(
-      this.loginForm.value.email,
-      this.loginForm.value.password
-    )
+    this.dispatcher.dispatch(logUser.init({
+      email: this.loginForm.value.email,
+      password: this.loginForm.value.password
+    }))
   }
 }

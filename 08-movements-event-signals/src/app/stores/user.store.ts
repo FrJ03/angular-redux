@@ -3,7 +3,7 @@ import { patchState, signalStore, withMethods, withProps, withState } from "@ngr
 import { AuthService } from "../services/auth.service"
 import { User } from "../models/user.model"
 import { on, withEffects, withReducer } from "@ngrx/signals/events"
-import { saveUser } from "../events/user.events"
+import { logUser, saveUser } from "../events/user.events"
 import { userEffect } from "../effects/user.effect"
 
 export interface UserState {
@@ -27,29 +27,6 @@ export const UserStore = signalStore(
     })),
     withMethods(({store, authService}) => {
         return {
-            logUser: async (email: string, password: string) => {
-                patchState(store, state => ({
-                    ...state,
-                    loading: true,
-                    error: null
-                }))
-
-                const result = await authService.loginUser(email, password)
-
-                if(result.result?.success && result.user){
-                    patchState(store, state => ({
-                        ...state,
-                        loading: false,
-                        user: result.user
-                    }))
-                } else {
-                    patchState(store, state => ({
-                        ...state,
-                        loading: false,
-                        error: result.result?.message ?? 'Loading error'
-                    }))
-                }
-            },
             checkLogged: async () => {
                 patchState(store, state => ({
                     ...state,
@@ -122,6 +99,21 @@ export const UserStore = signalStore(
             user: event.payload.user
         })),
         on(saveUser.error, (event, state) => ({
+            ...state,
+            loading: false,
+            error: event.payload.error
+        })),
+        on(logUser.init, (event, state) => ({
+            ...state,
+            loading: true,
+            error: null
+        })),
+        on(logUser.success, (event, state) => ({
+            ...state,
+            loading: false,
+            user: event.payload.user
+        })),
+        on(logUser.error, (event, state) => ({
             ...state,
             loading: false,
             error: event.payload.error
