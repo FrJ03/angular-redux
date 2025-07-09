@@ -19,3 +19,12 @@ export const logUser = eventGroup({
         error: type<{error: any}>()
     }
 })
+
+export const checkLogged = eventGroup({
+    source: '[User] check user logged',
+    events: {
+        init: type<void>(),
+        success: type<{user: User}>(),
+        error: type<{error: any}>()
+    }
+})

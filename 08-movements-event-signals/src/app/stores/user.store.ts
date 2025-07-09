@@ -3,7 +3,7 @@ import { patchState, signalStore, withMethods, withProps, withState } from "@ngr
 import { AuthService } from "../services/auth.service"
 import { User } from "../models/user.model"
 import { on, withEffects, withReducer } from "@ngrx/signals/events"
-import { logUser, saveUser } from "../events/user.events"
+import { checkLogged, logUser, saveUser } from "../events/user.events"
 import { userEffect } from "../effects/user.effect"
 
 export interface UserState {
@@ -27,42 +27,6 @@ export const UserStore = signalStore(
     })),
     withMethods(({store, authService}) => {
         return {
-            checkLogged: async () => {
-                patchState(store, state => ({
-                    ...state,
-                    loading: true,
-                    error: null
-                }))
-                
-                const result = await authService.checkLogged()
-
-                if(result.success && result.user) {
-                    const logResult = await authService.loginUser(
-                        result.user.email,
-                        result.user.password
-                    )
-
-                    if(logResult.result?.success) {
-                        patchState(store, state => ({
-                            ...state,
-                            loading: false,
-                            user: result.user
-                        }))
-                    } else {
-                        patchState(store, state => ({
-                            ...state,
-                            loading: false,
-                            error: logResult.result?.message ?? 'Login error'
-                        }))
-                    }
-                } else {
-                    patchState(store, state => ({
-                        ...state,
-                        loading: false,
-                        error: result.message
-                    }))
-                }
-            },
             logout: async () => {
                 patchState(store, state => ({
                     ...state,
@@ -114,6 +78,21 @@ export const UserStore = signalStore(
             user: event.payload.user
         })),
         on(logUser.error, (event, state) => ({
+            ...state,
+            loading: false,
+            error: event.payload.error
+        })),
+        on(checkLogged.init, (event, state) => ({
+            ...state,
+            loading: true,
+            error: null
+        })),
+        on(checkLogged.success, (event, state) => ({
+            ...state,
+            loading: false,
+            user: event.payload.user
+        })),
+        on(checkLogged.error, (event, state) => ({
             ...state,
             loading: false,
             error: event.payload.error
