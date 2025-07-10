@@ -19,3 +19,12 @@ export const createMovement = eventGroup({
         error: type<{error: any}>()
     }
 })
+
+export const deleteMovement = eventGroup({
+    source: '[Movements] delete movement',
+    events: {
+        init: type<{id: string}>(),
+        success: type<{movements: Movement[]}>(),
+        error: type<{error: any}>()
+    }
+})

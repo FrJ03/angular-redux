@@ -3,7 +3,7 @@ import { patchState, signalStore, withMethods, withProps, withState } from "@ngr
 import { MovementsService } from "../services/movements.service";
 import { inject } from "@angular/core";
 import { on, withEffects, withReducer } from "@ngrx/signals/events";
-import { createMovement, loadMovements } from "../events/movements.events";
+import { createMovement, deleteMovement, loadMovements } from "../events/movements.events";
 import { movementsEffect } from "../effects/movements.effect";
 
 export interface MovementsState {
@@ -25,36 +25,6 @@ export const MovementsStore = signalStore(
     store,
     movementsService: inject(MovementsService)
   })),
-  withMethods(({store, movementsService}) => ({
-      async deleteMovement(id: string): Promise<void> {
-        patchState(store, state => ({
-          ...state,
-          loading: true,
-          error: null
-        }))
-
-        const result = await movementsService.deleteItem(id)
-
-        if(result.success && result.deletedMovement) {
-          const newMovements = store.movements()
-            .filter(movement => 
-              movement.uid !== result.deletedMovement?.uid)
-  
-          patchState(store, state => ({
-            ...state,
-            movements: [...newMovements],
-            loading: false
-          }))
-        } else {
-          patchState(store, state => ({
-            ...state,
-            loading: false,
-            error: result.message
-          }))
-        }
-
-      }
-    })),
   withReducer(
     on(loadMovements.init, (event, state) => ({
       ...state,
@@ -85,6 +55,21 @@ export const MovementsStore = signalStore(
       ]
     })),
     on(createMovement.error, ({payload}, state) => ({
+      ...state,
+      loading: false,
+      error: payload.error
+    })),
+    on(deleteMovement.init, (event, state) => ({
+      ...state,
+      loading: true,
+      error: null
+    })),
+    on(deleteMovement.success, ({payload}, state) => ({
+      ...state,
+      loading: false,
+      movements: [...payload.movements]
+    })),
+    on(deleteMovement.error, ({payload}, state) => ({
       ...state,
       loading: false,
       error: payload.error

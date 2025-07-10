@@ -4,6 +4,8 @@ import { CommonModule } from '@angular/common';
 import { MovementsService } from '../../../services/movements.service';
 import Swal from 'sweetalert2';
 import { MovementsStore } from '../../../stores/movements.store';
+import { Dispatcher } from '@ngrx/signals/events';
+import { deleteMovement } from '../../../events/movements.events';
 
 @Component({
   selector: 'app-details',
@@ -13,6 +15,7 @@ import { MovementsStore } from '../../../stores/movements.store';
 export class DetailsComponent {
   movementsService = inject(MovementsService)
   private movementsStore = inject(MovementsStore)
+  private readonly dispatcher = inject(Dispatcher)
 
   movements: Signal<Movement[]> = this.movementsStore.movements
   error = this.movementsStore.error
@@ -46,6 +49,6 @@ export class DetailsComponent {
     }
     
     this.isDelProcessing.set(true)
-    this.movementsStore.deleteMovement(item.uid)
+    this.dispatcher.dispatch(deleteMovement.init({id: item.uid}))
   }
 }

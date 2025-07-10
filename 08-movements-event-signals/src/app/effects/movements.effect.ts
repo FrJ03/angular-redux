@@ -1,9 +1,9 @@
 import { inject } from "@angular/core";
 import { MovementsService } from "../services/movements.service";
 import { Events } from "@ngrx/signals/events";
-import { MovementsState } from "../stores/movements.store";
+import { MovementsState, MovementsStore } from "../stores/movements.store";
 import { StateSignals } from "@ngrx/signals";
-import { createMovement, loadMovements } from "../events/movements.events";
+import { createMovement, deleteMovement, loadMovements } from "../events/movements.events";
 import { switchMap } from "rxjs";
 
 export const movementsEffect = (
@@ -31,6 +31,21 @@ export const movementsEffect = (
                 return response.success
                     ? createMovement.success({movement: payload.movement})
                     : createMovement.error({error: response.message})
+            })
+        ),
+    deleteMovement$: events
+        .on(deleteMovement.init)
+        .pipe(
+            switchMap(async ({payload}) => {
+                const response = await movementsService.deleteItem(payload.id)
+
+                if (!response.success)
+                    return deleteMovement.error({error: response.message})
+
+                const newMovements = store.movements()
+                    .filter(movement => movement.uid !== payload.id)
+
+                return deleteMovement.success({movements: newMovements})
             })
         )
 })
