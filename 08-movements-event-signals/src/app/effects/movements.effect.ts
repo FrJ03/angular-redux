@@ -3,7 +3,7 @@ import { MovementsService } from "../services/movements.service";
 import { Events } from "@ngrx/signals/events";
 import { MovementsState } from "../stores/movements.store";
 import { StateSignals } from "@ngrx/signals";
-import { loadMovements } from "../events/movements.events";
+import { createMovement, loadMovements } from "../events/movements.events";
 import { switchMap } from "rxjs";
 
 export const movementsEffect = (
@@ -20,6 +20,17 @@ export const movementsEffect = (
                 return (response.success)
                     ? loadMovements.success({movements: response.movements})
                     : loadMovements.error({error: response.message})
+            })
+        ),
+    createMovement$: events
+        .on(createMovement.init)
+        .pipe(
+            switchMap(async ({payload}) => {
+                const response = await movementsService.createMovement(payload.movement)
+
+                return response.success
+                    ? createMovement.success({movement: payload.movement})
+                    : createMovement.error({error: response.message})
             })
         )
 })

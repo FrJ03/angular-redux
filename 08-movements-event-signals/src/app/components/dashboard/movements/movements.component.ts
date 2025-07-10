@@ -7,6 +7,8 @@ import { Movement } from '../../../models/movement.model';
 import Swal from 'sweetalert2';
 import { MovementsStore } from '../../../stores/movements.store';
 import { UserStore } from '../../../stores/user.store';
+import { Dispatcher } from '@ngrx/signals/events';
+import { createMovement } from '../../../events/movements.events';
 
 @Component({
   selector: 'app-movements',
@@ -16,6 +18,7 @@ import { UserStore } from '../../../stores/user.store';
 export class MovementsComponent {
   private movementsStore = inject(MovementsStore)
   private userStore = inject(UserStore)
+  private readonly dispatcher = inject(Dispatcher)
 
   form: FormGroup = new FormGroup({
     description: new FormControl('', [Validators.required]),
@@ -65,7 +68,7 @@ export class MovementsComponent {
       currentUser.email
     )
 
-    this.movementsStore.createMovement(movement)
+    this.dispatcher.dispatch(createMovement.init({movement}))
     this.isAddProcessing.set(true)
   }
 }

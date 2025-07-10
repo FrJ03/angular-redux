@@ -3,7 +3,7 @@ import { patchState, signalStore, withMethods, withProps, withState } from "@ngr
 import { MovementsService } from "../services/movements.service";
 import { inject } from "@angular/core";
 import { on, withEffects, withReducer } from "@ngrx/signals/events";
-import { loadMovements } from "../events/movements.events";
+import { createMovement, loadMovements } from "../events/movements.events";
 import { movementsEffect } from "../effects/movements.effect";
 
 export interface MovementsState {
@@ -26,32 +26,6 @@ export const MovementsStore = signalStore(
     movementsService: inject(MovementsService)
   })),
   withMethods(({store, movementsService}) => ({
-      async createMovement(movement: Movement): Promise<void> {
-        patchState(store, state => ({
-          ...state,
-          loading: true,
-          error: null
-        }))
-
-        const result = await movementsService.createMovement(movement)
-
-        if(result.success){
-          patchState(store, state => ({
-            ...state,
-            loading: false,
-            movements: [
-              ...state.movements,
-              movement
-            ]
-          }))
-        } else {
-          patchState(store, state => ({
-            ...state,
-            loading: false,
-            error: result.message
-          }))
-        }
-      },
       async deleteMovement(id: string): Promise<void> {
         patchState(store, state => ({
           ...state,
@@ -96,6 +70,24 @@ export const MovementsStore = signalStore(
       ...state,
       loading: false,
       error: payload
+    })),
+    on(createMovement.init, (event, state) => ({
+      ...state,
+      loading: true,
+      error: null
+    })),
+    on(createMovement.success, ({payload}, state) => ({
+      ...state,
+      loading: false,
+      movements: [
+        ...state.movements,
+        payload.movement
+      ]
+    })),
+    on(createMovement.error, ({payload}, state) => ({
+      ...state,
+      loading: false,
+      error: payload.error
     }))
   ),
   withEffects(

@@ -10,3 +10,12 @@ export const loadMovements = eventGroup({
         error: type<{error: any}>()
     }
 })
+
+export const createMovement = eventGroup({
+    source: '[Movements] create movement',
+    events: {
+        init: type<{movement: Movement}>(),
+        success: type<{movement: Movement}>(),
+        error: type<{error: any}>()
+    }
+})
