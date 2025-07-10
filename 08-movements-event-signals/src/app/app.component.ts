@@ -5,6 +5,7 @@ import { MovementsStore } from './stores/movements.store';
 import { UserStore } from './stores/user.store';
 import { Dispatcher } from '@ngrx/signals/events';
 import { checkLogged } from './events/user.events';
+import { loadMovements } from './events/movements.events';
 
 @Component({
   selector: 'app-root',
@@ -15,7 +16,6 @@ import { checkLogged } from './events/user.events';
 export class AppComponent {
   private userStore = inject(UserStore)
   private readonly dispatcher = inject(Dispatcher)
-  private movementsStore = inject(MovementsStore)
 
   user: Signal<User | null> = this.userStore.user
   
@@ -26,7 +26,7 @@ export class AppComponent {
       const email = this.user()?.email
       
       if(email !== undefined){
-        this.movementsStore.loadMovements(email)
+        this.dispatcher.dispatch(loadMovements.init({email}))
       }
     })
   }

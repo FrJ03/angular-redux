@@ -2,6 +2,9 @@ import { Movement } from "../models/movement.model";
 import { patchState, signalStore, withMethods, withProps, withState } from "@ngrx/signals";
 import { MovementsService } from "../services/movements.service";
 import { inject } from "@angular/core";
+import { on, withEffects, withReducer } from "@ngrx/signals/events";
+import { loadMovements } from "../events/movements.events";
+import { movementsEffect } from "../effects/movements.effect";
 
 export interface MovementsState {
     movements: Movement[],
@@ -23,29 +26,6 @@ export const MovementsStore = signalStore(
     movementsService: inject(MovementsService)
   })),
   withMethods(({store, movementsService}) => ({
-      async loadMovements(email: string): Promise<void> {
-        patchState(store, (state) => ({
-          ...state,
-          loading: true,
-          error: null
-        }));
-
-        const movementsResult = await movementsService.getMovementsByEmail(email);
-
-        if (movementsResult.success) {
-          patchState(store, (state) => ({
-            ...state,
-            loading: false,
-            movements: movementsResult.movements
-          }));
-        } else {
-          patchState(store, (state) => ({
-            ...state,
-            loading: false,
-            error: movementsResult.message
-          }));
-        }
-      },
       async createMovement(movement: Movement): Promise<void> {
         patchState(store, state => ({
           ...state,
@@ -100,6 +80,26 @@ export const MovementsStore = signalStore(
         }
 
       }
+    })),
+  withReducer(
+    on(loadMovements.init, (event, state) => ({
+      ...state,
+      loading: true,
+      error: null
+    })),
+    on(loadMovements.success, ({payload}, state) => ({
+      ...state,
+      loading: false,
+      movements: payload.movements
+    })),
+    on(loadMovements.error, ({payload}, state) => ({
+      ...state,
+      loading: false,
+      error: payload
     }))
+  ),
+  withEffects(
+    movementsEffect
+  )
 );
 
