@@ -3,7 +3,7 @@ import { patchState, signalStore, withMethods, withProps, withState } from "@ngr
 import { AuthService } from "../services/auth.service"
 import { User } from "../models/user.model"
 import { on, withEffects, withReducer } from "@ngrx/signals/events"
-import { checkLogged, logUser, saveUser } from "../events/user.events"
+import { checkLogged, logout, logUser, saveUser } from "../events/user.events"
 import { userEffect } from "../effects/user.effect"
 
 export interface UserState {
@@ -25,32 +25,6 @@ export const UserStore = signalStore(
         store,
         authService: inject(AuthService)
     })),
-    withMethods(({store, authService}) => {
-        return {
-            logout: async () => {
-                patchState(store, state => ({
-                    ...state,
-                    loading: true,
-                    error: null
-                }))
-                const result = await authService.logout()
-
-                if(result.success) {
-                    patchState(store, state => ({
-                        ...state,
-                        loading: false,
-                        user: null
-                    }))
-                } else {
-                    patchState(store, state => ({
-                        ...state,
-                        loading: false,
-                        error: result.message
-                    }))
-                }
-            }
-        }
-    }),
     withReducer(
         on(saveUser.init, (event, state) => ({
             ...state,
@@ -93,6 +67,21 @@ export const UserStore = signalStore(
             user: event.payload.user
         })),
         on(checkLogged.error, (event, state) => ({
+            ...state,
+            loading: false,
+            error: event.payload.error
+        })),
+        on(logout.init, (event, state) => ({
+            ...state,
+            loading: true,
+            error: null
+        })),
+        on(logout.success, (event, state) => ({
+            ...state,
+            loading: false,
+            user: null
+        })),
+        on(logout.error, (event, state) => ({
             ...state,
             loading: false,
             error: event.payload.error

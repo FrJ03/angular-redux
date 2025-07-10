@@ -28,3 +28,12 @@ export const checkLogged = eventGroup({
         error: type<{error: any}>()
     }
 })
+
+export const logout = eventGroup({
+    source: '[User] logout user',
+    events: {
+        init: type<void>(),
+        success: type<void>(),
+        error: type<{error: any}>()
+    }
+})

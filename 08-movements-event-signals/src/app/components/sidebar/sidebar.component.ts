@@ -2,6 +2,8 @@ import { Component, effect, inject, signal, WritableSignal } from '@angular/core
 import { Router, RouterLink } from '@angular/router';
 import Swal from 'sweetalert2';
 import { UserStore } from '../../stores/user.store';
+import { Dispatcher } from '@ngrx/signals/events';
+import { logout } from '../../events/user.events';
 
 @Component({
   selector: 'app-sidebar',
@@ -10,6 +12,7 @@ import { UserStore } from '../../stores/user.store';
 })
 export class SidebarComponent {
   userStore = inject(UserStore)
+  private readonly dispatcher = inject(Dispatcher)
   router = inject(Router)
 
   user = this.userStore.user
@@ -43,6 +46,6 @@ export class SidebarComponent {
 
   async logout(){
     this.isLoggingOut.set(true)
-    await this.userStore.logout()
+    this.dispatcher.dispatch(logout.init())
   }
 }

@@ -1,7 +1,7 @@
 import { inject } from "@angular/core";
 import { Events } from "@ngrx/signals/events";
 import { AuthService } from "../services/auth.service";
-import { checkLogged, logUser, saveUser } from "../events/user.events";
+import { checkLogged, logout, logUser, saveUser } from "../events/user.events";
 import { switchMap } from "rxjs";
 import { UserState } from "../stores/user.store";
 import { StateSignals } from "@ngrx/signals";
@@ -57,6 +57,17 @@ export const userEffect = (
                 } else {
                     return checkLogged.error({error: response.message})
                 }
+            })
+        ),
+    logout$: events
+        .on(logout.init)
+        .pipe(
+            switchMap(async () => {
+                const response = await authService.logout()
+
+                return response.success
+                    ? logout.success()
+                    : logout.error({error: response.message})
             })
         )
 })
